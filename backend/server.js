@@ -1,12 +1,2 @@
-import express from 'express';
-
-const app = express();
-const port = 3000;
-
-app.get('/', (req, res) => {
-    res.send('Hello World');
-});
-
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
+// Entry point retained for backward compatibility. The actual app lives in src/server.js.
+import './src/server.js';
