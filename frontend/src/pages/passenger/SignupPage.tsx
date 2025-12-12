@@ -5,7 +5,7 @@ import { z } from "zod";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
 import { Mail, Lock, User, Phone, Car, Loader2 } from "lucide-react";
-import { mockAuthService } from "@/services/mockAuthService";
+import { apiService } from "@/services/apiService";
 import { useAuthStore } from "@/store/authStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,7 +28,7 @@ type SignupFormData = z.infer<typeof signupSchema>;
 const SignupPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const setPendingPhone = useAuthStore((state) => state.setPendingPhone);
+  const setAuth = useAuthStore((state) => state.setAuth);
 
   const {
     register,
@@ -41,12 +41,10 @@ const SignupPage = () => {
   const onSubmit = async (data: { name: string; email: string; phone: string; password: string; confirmPassword: string }) => {
     setIsLoading(true);
     try {
-      const { requiresOTP } = await mockAuthService.signup(data);
-      if (requiresOTP) {
-        setPendingPhone(data.phone);
-        toast.success("Account created! Please verify your phone number.");
-        navigate("/passenger/verify-otp");
-      }
+      const { passenger, token } = await apiService.signup(data);
+      setAuth(passenger, token);
+      toast.success("Account created successfully!");
+      navigate("/passenger/dashboard");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Signup failed");
     } finally {

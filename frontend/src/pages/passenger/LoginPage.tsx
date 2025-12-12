@@ -6,7 +6,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Mail, Lock, Car, Loader2 } from "lucide-react";
-import { mockAuthService } from "@/services/mockAuthService";
+import { apiService } from "@/services/apiService";
 import { useAuthStore } from "@/store/authStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,12 +36,12 @@ const LoginPage = () => {
   const onSubmit = async (data: { email: string; password: string }) => {
     setIsLoading(true);
     try {
-      const { passenger, token } = await mockAuthService.login(data);
+      const { passenger, token } = await apiService.login(data);
       setAuth(passenger, token);
       toast.success("Login successful!");
       navigate("/passenger/dashboard");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Login failed");
+      toast.error(error instanceof Error ? error.message : "Invalid email or password");
     } finally {
       setIsLoading(false);
     }
@@ -123,21 +123,6 @@ const LoginPage = () => {
                 </p>
               </div>
 
-              {/* Demo credentials */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="mt-6 p-4 bg-warning/10 border border-warning/20 rounded-lg"
-              >
-                <p className="text-sm text-foreground">
-                  <strong className="text-warning">Demo Credentials:</strong>
-                  <br />
-                  Email: john@example.com
-                  <br />
-                  Password: password123
-                </p>
-              </motion.div>
             </CardContent>
           </Card>
         </div>
