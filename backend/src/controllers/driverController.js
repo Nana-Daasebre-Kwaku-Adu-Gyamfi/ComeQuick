@@ -142,12 +142,13 @@ export const getProfile = async (req, res, next) => {
 // @access  Private
 export const updateProfile = async (req, res, next) => {
   try {
-    const { name, carModel, carColor } = req.body;
+    const { name, carModel, carColor, profileImageUrl } = req.body;
     const driver = await Driver.findById(req.driver._id);
 
     if (name) driver.name = name;
     if (carModel) driver.carModel = carModel;
     if (carColor) driver.carColor = carColor;
+    if (profileImageUrl) driver.profileImageUrl = profileImageUrl;
 
     await driver.save();
 

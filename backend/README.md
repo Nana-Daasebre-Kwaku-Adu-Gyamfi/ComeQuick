@@ -9,6 +9,7 @@ A comprehensive backend API for the ComeQuick ride-sharing application built wit
 - ✅ Ride Management System
 - ✅ Driver-Passenger Matching
 - ✅ Profile Management
+- ✅ Image Upload with Cloudinary
 - ✅ Request Validation
 - ✅ Rate Limiting
 - ✅ Security Middleware (Helmet, CORS)
@@ -103,6 +104,10 @@ The server will start on `http://localhost:3000` (or your configured PORT).
 - `PUT /api/rides/:id/complete` - Complete ride (Protected - Driver)
 - `GET /api/rides/driver/active` - Get driver's active ride (Protected - Driver)
 
+### Upload
+- `POST /api/upload` - Upload image to Cloudinary (Protected - Passenger/Driver)
+- `DELETE /api/upload/:publicId` - Delete image from Cloudinary (Protected)
+
 ### Health Check
 - `GET /api/health` - API health status
 
@@ -148,6 +153,9 @@ npm run format
 | `FRONTEND_URL` | Frontend URL for CORS | `http://localhost:5173` |
 | `RATE_LIMIT_WINDOW_MS` | Rate limit window | `900000` (15 min) |
 | `RATE_LIMIT_MAX_REQUESTS` | Max requests per window | `100` |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name | Required |
+| `CLOUDINARY_API_KEY` | Cloudinary API key | Required |
+| `CLOUDINARY_API_SECRET` | Cloudinary API secret | Required |
 
 ## Security Features
 
@@ -231,6 +239,22 @@ All errors are handled by a centralized error handler middleware that:
 - Verify JWT_SECRET is set
 - Check token expiration
 - Ensure Authorization header format: `Bearer TOKEN`
+
+## Cloudinary Integration
+
+The backend includes Cloudinary integration for image uploads. See:
+- `CLOUDINARY_SETUP.md` - Setup and configuration guide
+- `CLOUDINARY_USAGE_EXAMPLE.md` - Usage examples and code samples
+
+**Quick Setup:**
+1. Add Cloudinary credentials to `.env`:
+   ```env
+   CLOUDINARY_CLOUD_NAME=your_cloud_name
+   CLOUDINARY_API_KEY=your_api_key
+   CLOUDINARY_API_SECRET=your_api_secret
+   ```
+2. Upload images via `POST /api/upload`
+3. Update profile with returned image URL
 
 ## Contributing
 

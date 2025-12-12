@@ -19,11 +19,12 @@ export const getProfile = async (req, res, next) => {
 // @access  Private
 export const updateProfile = async (req, res, next) => {
   try {
-    const { name, phone } = req.body;
+    const { name, phone, profileImageUrl } = req.body;
     const passenger = await Passenger.findById(req.passenger._id);
 
     if (name) passenger.name = name;
     if (phone) passenger.phone = phone;
+    if (profileImageUrl) passenger.profileImageUrl = profileImageUrl;
 
     await passenger.save();
 

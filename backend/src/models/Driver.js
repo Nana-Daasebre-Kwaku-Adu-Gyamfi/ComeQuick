@@ -73,6 +73,10 @@ const driverSchema = new mongoose.Schema(
       ref: 'Ride',
       default: null,
     },
+    profileImageUrl: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,

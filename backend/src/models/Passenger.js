@@ -29,11 +29,11 @@ const passengerSchema = new mongoose.Schema(
     },
     isVerified: {
       type: Boolean,
-      default: false,
+      default: true, // Users are verified by default (no OTP)
     },
-    otp: {
-      code: String,
-      expiresAt: Date,
+    profileImageUrl: {
+      type: String,
+      default: null,
     },
   },
   {
@@ -60,7 +60,6 @@ passengerSchema.methods.matchPassword = async function (enteredPassword) {
 passengerSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;
-  delete obj.otp;
   return obj;
 };
 
