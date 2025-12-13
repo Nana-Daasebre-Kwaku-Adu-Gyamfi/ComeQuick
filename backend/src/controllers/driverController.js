@@ -30,10 +30,14 @@ export const registerDriver = async (req, res, next) => {
       password,
     });
 
+    // Generate token for immediate login
+    const token = generateToken(driver._id);
+
     logger.info(`New driver registered: ${phone}`);
 
     res.status(201).json({
       message: 'Driver registered successfully',
+      token,
       driver: {
         id: driver._id,
         name: driver.name,
@@ -41,7 +45,10 @@ export const registerDriver = async (req, res, next) => {
         carModel: driver.carModel,
         carColor: driver.carColor,
         licensePlate: driver.licensePlate,
+        licensePlate: driver.licensePlate,
         isVerified: driver.isVerified,
+        rating: driver.rating,
+        ratingCount: driver.ratingCount,
       },
     });
   } catch (error) {
@@ -82,7 +89,10 @@ export const loginDriver = async (req, res, next) => {
         carColor: driver.carColor,
         licensePlate: driver.licensePlate,
         isVerified: driver.isVerified,
+        isVerified: driver.isVerified,
         isAvailable: driver.isAvailable,
+        rating: driver.rating,
+        ratingCount: driver.ratingCount,
       },
     });
   } catch (error) {
@@ -205,7 +215,7 @@ export const getPendingRequests = async (req, res, next) => {
     const Ride = (await import('../models/Ride.js')).default;
     const requests = await Ride.find({ status: 'pending' })
       .populate('passengerId', 'name phone')
-      .populate('locationId', 'name coordinates')
+
       .sort({ createdAt: -1 })
       .limit(20);
 

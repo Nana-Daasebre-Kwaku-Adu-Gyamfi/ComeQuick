@@ -1,5 +1,5 @@
 import express from 'express';
-import cors from 'cors';
+
 import helmet from 'helmet';
 import apiRouter from './routes/index.js';
 import notFound from './middleware/notFound.js';
@@ -10,23 +10,52 @@ import logger from './utils/logger.js';
 const app = express();
 
 // Security middleware
-app.use(helmet());
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-    credentials: true,
-  })
-);
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
+// Manual CORS configuration
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', req.headers['access-control-request-headers'] || 'Content-Type, Authorization, X-Requested-With');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Vary', 'Origin');
+  res.setHeader('X-CORS-Fix', 'Applied');
+
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
+
 
 // Body parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Rate limiting
-app.use('/api/', apiLimiter);
+// Rate limiting (skip for pending rides endpoint which needs frequent polling)
+app.use('/api/', (req, res, next) => {
+  // Skip rate limiting for pending rides endpoint
+  if (req.path === '/rides/pending') {
+    return next();
+  }
+  apiLimiter(req, res, next);
+});
 
 // Request logging
 app.use((req, res, next) => {
+  console.log(`\n=== INCOMING REQUEST ===`);
+  console.log(`${req.method} ${req.path}`);
+  console.log('Headers:', req.headers);
+  if (req.body && Object.keys(req.body).length > 0) {
+    console.log('Body:', JSON.stringify(req.body, null, 2));
+  }
+  console.log('========================\n');
+
   logger.info(`${req.method} ${req.path}`);
   next();
 });

@@ -9,13 +9,11 @@ import { useEffect } from "react";
 
 // Pages
 import SplashScreen from "./pages/SplashScreen";
-import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
 // Passenger Pages
 import LoginPage from "./pages/passenger/LoginPage";
 import SignupPage from "./pages/passenger/SignupPage";
-import VerifyOTPPage from "./pages/passenger/VerifyOTPPage";
 import DashboardPage from "./pages/passenger/DashboardPage";
 import RequestRidePage from "./pages/passenger/RequestRidePage";
 import ActiveRidePage from "./pages/passenger/ActiveRidePage";
@@ -24,8 +22,8 @@ import SettingsPage from "./pages/passenger/SettingsPage";
 
 // Driver Pages
 import WelcomePage from "./pages/driver/WelcomePage";
-import ScanQRPage from "./pages/driver/ScanQRPage";
-import VerifyDriverPage from "./pages/driver/VerifyDriverPage";
+import DriverLoginPage from "./pages/driver/DriverLoginPage";
+import DriverRegisterPage from "./pages/driver/DriverRegisterPage";
 import DriverDashboardPage from "./pages/driver/DriverDashboardPage";
 import DriverMapPage from "./pages/driver/DriverMapPage";
 import DriverProfilePage from "./pages/driver/DriverProfilePage";
@@ -46,7 +44,7 @@ const PassengerRoute = ({ children }: { children: React.ReactNode }) => {
 // Protected route for drivers
 const DriverRoute = ({ children }: { children: React.ReactNode }) => {
   const driver = useDriverStore((state) => state.driver);
-  return driver ? <>{children}</> : <Navigate to="/driver/scan-qr" />;
+  return driver ? <>{children}</> : <Navigate to="/driver/login" />;
 };
 
 // Theme initializer
@@ -70,12 +68,12 @@ const App = () => (
         <Routes>
           {/* Splash / Welcome */}
           <Route path="/" element={<SplashScreen />} />
-          <Route path="/home" element={<Index />} />
 
           {/* Passenger Routes */}
           <Route path="/passenger/login" element={<LoginPage />} />
           <Route path="/passenger/signup" element={<SignupPage />} />
-          <Route path="/passenger/verify-otp" element={<VerifyOTPPage />} />
+          <Route path="/passenger/login" element={<LoginPage />} />
+          <Route path="/passenger/signup" element={<SignupPage />} />
           <Route path="/passenger/dashboard" element={<PassengerRoute><DashboardPage /></PassengerRoute>} />
           <Route path="/passenger/request-ride" element={<PassengerRoute><RequestRidePage /></PassengerRoute>} />
           <Route path="/passenger/active-ride" element={<PassengerRoute><ActiveRidePage /></PassengerRoute>} />
@@ -85,8 +83,8 @@ const App = () => (
           {/* Driver Routes */}
           <Route path="/driver" element={<WelcomePage />} />
           <Route path="/driver/map" element={<DriverMapPage />} />
-          <Route path="/driver/scan-qr" element={<ScanQRPage />} />
-          <Route path="/driver/verify" element={<VerifyDriverPage />} />
+          <Route path="/driver/login" element={<DriverLoginPage />} />
+          <Route path="/driver/register" element={<DriverRegisterPage />} />
           <Route path="/driver/dashboard" element={<DriverRoute><DriverDashboardPage /></DriverRoute>} />
           <Route path="/driver/profile" element={<DriverRoute><DriverProfilePage /></DriverRoute>} />
           <Route path="/driver/settings" element={<DriverRoute><DriverSettingsPage /></DriverRoute>} />

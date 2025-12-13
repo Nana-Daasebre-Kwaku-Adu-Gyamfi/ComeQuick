@@ -60,9 +60,17 @@ const driverSchema = new mongoose.Schema(
     },
     rating: {
       type: Number,
-      default: 0,
+      default: 5.0,
       min: 0,
       max: 5,
+    },
+    totalRatings: {
+      type: Number,
+      default: 0,
+    },
+    ratingCount: {
+      type: Number,
+      default: 0,
     },
     isAvailable: {
       type: Boolean,

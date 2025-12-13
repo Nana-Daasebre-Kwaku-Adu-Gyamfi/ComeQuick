@@ -4,6 +4,7 @@ export interface Passenger {
   email: string;
   phone: string;
   isVerified: boolean;
+  profileImageUrl?: string;
   createdAt: Date;
 }
 

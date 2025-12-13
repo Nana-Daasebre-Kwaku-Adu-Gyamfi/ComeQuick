@@ -5,11 +5,11 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 // Helper function to handle API responses
 const handleResponse = async (response: Response) => {
   const data = await response.json();
-  
+
   if (!response.ok) {
     throw new Error(data.message || 'An error occurred');
   }
-  
+
   return data;
 };
 
@@ -30,7 +30,7 @@ export const apiService = {
     });
 
     const result = await handleResponse(response);
-    
+
     // Map backend response to frontend Passenger type
     return {
       passenger: {
@@ -39,6 +39,7 @@ export const apiService = {
         email: result.passenger.email,
         phone: result.passenger.phone,
         isVerified: result.passenger.isVerified,
+        profileImageUrl: result.passenger.profileImageUrl,
         createdAt: new Date(),
       },
       token: result.token,
@@ -56,7 +57,7 @@ export const apiService = {
     });
 
     const result = await handleResponse(response);
-    
+
     // Map backend response to frontend Passenger type
     return {
       passenger: {
@@ -65,6 +66,7 @@ export const apiService = {
         email: result.passenger.email,
         phone: result.passenger.phone,
         isVerified: result.passenger.isVerified,
+        profileImageUrl: result.passenger.profileImageUrl,
         createdAt: new Date(),
       },
       token: result.token,
@@ -86,13 +88,14 @@ export const apiService = {
     }
 
     const result = await handleResponse(response);
-    
+
     return {
       id: result.passenger.id || result.passenger._id,
       name: result.passenger.name,
       email: result.passenger.email,
       phone: result.passenger.phone,
       isVerified: result.passenger.isVerified,
+      profileImageUrl: result.passenger.profileImageUrl,
       createdAt: new Date(result.passenger.createdAt || Date.now()),
     };
   },

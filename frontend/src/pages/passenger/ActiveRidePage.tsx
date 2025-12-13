@@ -3,12 +3,12 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Car, Phone, MapPin, Navigation, Clock, ArrowLeft, Loader2, CheckCircle2, Star, X } from "lucide-react";
-import { mockRideService } from "@/services/mockRideService";
+import { rideService } from "@/services/rideService";
 import { useRideStore } from "@/store/rideStore";
-import { Ride } from "@/types/ride.types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { PageTransition } from "@/components/common/PageTransition";
+import { RatingModal } from "@/components/common/RatingModal";
 import { format } from "date-fns";
 
 const ActiveRidePage = () => {
@@ -21,6 +21,7 @@ const ActiveRidePage = () => {
 
   const [isWaiting, setIsWaiting] = useState(true);
   const [isCancelling, setIsCancelling] = useState(false);
+  const [showRatingModal, setShowRatingModal] = useState(false);
 
   useEffect(() => {
     if (!currentRequest) {
@@ -28,25 +29,31 @@ const ActiveRidePage = () => {
       return;
     }
 
-    if (activeRide) {
-      setIsWaiting(false);
-    }
-
-    const handleDriverMatch = (event: CustomEvent) => {
-      const { requestId, ride } = event.detail;
-      if (requestId === currentRequest.id) {
-        setActiveRide(ride as Ride);
-        setIsWaiting(false);
-        toast.success("Driver found! Check details below.");
+    // Poll for ride status every 3 seconds
+    const pollInterval = setInterval(async () => {
+      try {
+        const ride = await rideService.getActiveRide();
+        if (ride) {
+          console.log('Polled ride:', ride); // Debug log
+          setActiveRide(ride);
+          
+          // Check if driver has been assigned (status changed from pending to matched)
+          if (ride.status === 'matched' || ride.status === 'in_progress') {
+            setIsWaiting(false);
+            if (isWaiting) {
+              toast.success("Driver accepted your ride!");
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error polling ride status:", error);
       }
-    };
-
-    window.addEventListener("driver-matched", handleDriverMatch as EventListener);
+    }, 3000); // Poll every 3 seconds
 
     return () => {
-      window.removeEventListener("driver-matched", handleDriverMatch as EventListener);
+      clearInterval(pollInterval);
     };
-  }, [currentRequest, activeRide]);
+  }, [currentRequest, isWaiting, navigate, setActiveRide]);
 
   const handleCancelRequest = async () => {
     if (!currentRequest) return;
@@ -56,7 +63,7 @@ const ActiveRidePage = () => {
 
     setIsCancelling(true);
     try {
-      await mockRideService.cancelRideRequest(currentRequest.id);
+      await rideService.cancelRide(currentRequest._id || currentRequest.id);
       toast.success("Ride request cancelled");
       clearRide();
       navigate("/passenger/dashboard");
@@ -70,16 +77,17 @@ const ActiveRidePage = () => {
   const handleCompleteRide = async () => {
     if (!activeRide) return;
 
-    try {
-      await mockRideService.completeRide(activeRide.id);
-      const completedRide = { ...activeRide, status: "completed" as const, completedAt: new Date() };
-      addToHistory(completedRide);
-      toast.success("Ride completed! Thank you for using ComeQuick.");
-      clearRide();
-      navigate("/passenger/dashboard");
-    } catch (error) {
-      toast.error("Failed to complete ride");
-    }
+    // Show rating modal
+    setShowRatingModal(true);
+  };
+
+  const handleRatingSubmitted = () => {
+    if (!activeRide) return;
+    
+    const completedRide = { ...activeRide, status: "completed" as const, completedAt: new Date() };
+    addToHistory(completedRide);
+    clearRide();
+    navigate("/passenger/dashboard");
   };
 
   if (!currentRequest) {
@@ -182,7 +190,7 @@ const ActiveRidePage = () => {
               )}
 
               {/* Driver Found State */}
-              {!isWaiting && activeRide && (
+              {!isWaiting && activeRide && activeRide.driverId && typeof activeRide.driverId === 'object' && (
                 <motion.div
                   key="driver-found"
                   initial={{ opacity: 0, scale: 0.95 }}
@@ -194,7 +202,7 @@ const ActiveRidePage = () => {
                     <CardContent className="py-4 flex items-center gap-3">
                       <CheckCircle2 className="w-6 h-6 text-success" />
                       <div>
-                        <p className="font-semibold text-foreground">Driver Assigned!</p>
+                        <p className="font-semibold text-foreground">A driver has accepted your request!</p>
                         <p className="text-sm text-muted-foreground">Your driver is on the way</p>
                       </div>
                     </CardContent>
@@ -204,20 +212,30 @@ const ActiveRidePage = () => {
                   <Card>
                     <CardContent className="pt-6">
                       <div className="flex items-center gap-4 mb-6">
-                        <div className="w-16 h-16 gradient-primary rounded-full flex items-center justify-center">
-                          <span className="text-2xl font-bold text-primary-foreground">
-                            {activeRide.driver.name.charAt(0)}
-                          </span>
+                        <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-primary relative">
+                          {activeRide.driverId.profileImageUrl ? (
+                            <img 
+                              src={activeRide.driverId.profileImageUrl} 
+                              alt={activeRide.driverId.name} 
+                              className="w-full h-full object-cover" 
+                            />
+                          ) : (
+                            <div className="w-full h-full gradient-primary flex items-center justify-center">
+                              <span className="text-2xl font-bold text-primary-foreground">
+                                {activeRide.driverId.name.charAt(0)}
+                              </span>
+                            </div>
+                          )}
                         </div>
                         <div className="flex-1">
-                          <h3 className="text-xl font-bold text-foreground">{activeRide.driver.name}</h3>
+                          <h3 className="text-xl font-bold text-foreground">{activeRide.driverId.name}</h3>
                           <div className="flex items-center gap-1 text-sm text-muted-foreground">
                             <Star className="w-4 h-4 fill-warning text-warning" />
-                            <span>{activeRide.driver.rating || 4.8}</span>
+                            <span>{activeRide.driverId.rating || 4.8}</span>
                           </div>
                         </div>
                         <a
-                          href={`tel:${activeRide.driver.phone}`}
+                          href={`tel:${activeRide.driverId.phone}`}
                           className="w-12 h-12 gradient-primary rounded-full flex items-center justify-center hover:shadow-glow transition-all"
                         >
                           <Phone className="w-5 h-5 text-primary-foreground" />
@@ -227,15 +245,15 @@ const ActiveRidePage = () => {
                       <div className="grid grid-cols-3 gap-4 p-4 bg-muted/50 rounded-xl">
                         <div className="text-center">
                           <p className="text-xs text-muted-foreground mb-1">Car Model</p>
-                          <p className="font-semibold text-foreground text-sm">{activeRide.driver.carModel}</p>
+                          <p className="font-semibold text-foreground text-sm">{activeRide.driverId.carModel}</p>
                         </div>
                         <div className="text-center border-x border-border">
                           <p className="text-xs text-muted-foreground mb-1">Color</p>
-                          <p className="font-semibold text-foreground text-sm">{activeRide.driver.carColor}</p>
+                          <p className="font-semibold text-foreground text-sm">{activeRide.driverId.carColor}</p>
                         </div>
                         <div className="text-center">
                           <p className="text-xs text-muted-foreground mb-1">Plate</p>
-                          <p className="font-semibold text-foreground text-sm font-mono">{activeRide.driver.licensePlate}</p>
+                          <p className="font-semibold text-foreground text-sm font-mono">{activeRide.driverId.licensePlate}</p>
                         </div>
                       </div>
                     </CardContent>
@@ -257,6 +275,17 @@ const ActiveRidePage = () => {
           </div>
         </PageTransition>
       </main>
+
+      {/* Rating Modal */}
+      {activeRide && activeRide.driverId && typeof activeRide.driverId === 'object' && (
+        <RatingModal
+          isOpen={showRatingModal}
+          onClose={() => setShowRatingModal(false)}
+          rideId={activeRide._id || activeRide.id}
+          driverName={activeRide.driverId.name}
+          onRatingSubmitted={handleRatingSubmitted}
+        />
+      )}
     </div>
   );
 };

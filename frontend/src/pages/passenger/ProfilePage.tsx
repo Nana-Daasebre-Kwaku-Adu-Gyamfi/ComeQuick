@@ -20,16 +20,51 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(passenger?.name || "");
   const [phone, setPhone] = useState(passenger?.phone || "");
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [profileImage, setProfileImage] = useState<string | null>(passenger?.profileImageUrl || null);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    const token = useAuthStore.getState().token;
+    
+    if (!file || !passenger || !token) return;
+
+    // Local preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfileImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    // Upload to server
+    const toastId = toast.loading("Uploading photo...");
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch('http://localhost:3000/api/upload/profile', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Upload failed');
+      }
+
+      // Update local passenger state
+      updatePassenger({
+        ...passenger,
+        profileImageUrl: data.imageUrl,
+      });
+
+      toast.success("Photo uploaded successfully", { id: toastId });
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error("Failed to upload photo", { id: toastId });
     }
   };
 

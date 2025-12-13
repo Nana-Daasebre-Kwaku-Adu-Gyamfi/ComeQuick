@@ -11,6 +11,7 @@ export interface Location {
 
 export interface RideRequest {
   id: string;
+  _id?: string; // MongoDB ID field
   passengerId: string;
   locationId: string;
   pickupLocation: string;
@@ -28,12 +29,15 @@ export interface Driver {
   carColor: string;
   licensePlate: string;
   rating?: number;
+  profileImageUrl?: string;
 }
 
 export interface Ride {
   id: string;
+  _id?: string; // MongoDB ID field
   requestId: string;
-  driver: Driver;
+  driverId?: string | Driver; // Can be ID string or populated Driver object
+  driver?: Driver; // Deprecated, use driverId
   status: RideStatus;
   acceptedAt: Date;
   completedAt?: Date;

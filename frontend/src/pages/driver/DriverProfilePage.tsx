@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Camera, Car, Phone, User, Settings, ChevronRight, MapPin } from "lucide-react";
+import { ArrowLeft, Camera, Car, Phone, User, Settings, ChevronRight, MapPin, Star, Clock } from "lucide-react";
 import { useDriverStore } from "@/store/driverStore";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -22,21 +22,107 @@ const DriverProfilePage = () => {
   const [carModel, setCarModel] = useState(driver?.carModel || "");
   const [carColor, setCarColor] = useState(driver?.carColor || "");
   const [licensePlate, setLicensePlate] = useState(driver?.licensePlate || "");
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [profileImage, setProfileImage] = useState<string | null>(driver?.profileImageUrl || null);
+  
+  // Ride history state
+  const [rideHistory, setRideHistory] = useState<any[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    const fetchRideHistory = async () => {
+      if (!driver?.sessionToken) return;
+      
+      setIsLoadingHistory(true);
+      try {
+        const response = await fetch('http://localhost:3000/api/rides/driver/history', {
+          headers: {
+            'Authorization': `Bearer ${driver.sessionToken}`
+          }
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setRideHistory(data.rides || []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch ride history:", error);
+      } finally {
+        setIsLoadingHistory(false);
+      }
+    };
+
+    fetchRideHistory();
+  }, [driver]);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    if (!file || !driver?.sessionToken) return;
+
+    // Local preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfileImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    // Upload to server
+    const toastId = toast.loading("Uploading photo...");
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch('http://localhost:3000/api/upload/profile', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${driver.sessionToken}`,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Upload failed');
+      }
+
+      // Update local driver state
+      setDriver({
+        ...driver,
+        profileImageUrl: data.imageUrl,
+      });
+
+      toast.success("Photo uploaded successfully", { id: toastId });
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error("Failed to upload photo", { id: toastId });
     }
   };
 
-  const handleSave = () => {
-    if (driver) {
+  const handleSave = async () => {
+    if (!driver?.sessionToken) return;
+
+    const toastId = toast.loading("Saving profile...");
+    try {
+      const response = await fetch('http://localhost:3000/api/drivers/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${driver.sessionToken}`,
+        },
+        body: JSON.stringify({
+          name,
+          phone,
+          carModel,
+          carColor,
+          licensePlate,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Update failed');
+      }
+
       setDriver({
         ...driver,
         name,
@@ -44,9 +130,14 @@ const DriverProfilePage = () => {
         carModel,
         carColor,
         licensePlate,
+        profileImageUrl: data.driver?.profileImageUrl || driver.profileImageUrl,
       });
-      toast.success("Profile updated successfully!");
+
+      toast.success("Profile updated successfully!", { id: toastId });
       setIsEditing(false);
+    } catch (error) {
+      console.error("Update error:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to save profile", { id: toastId });
     }
   };
 
@@ -112,6 +203,11 @@ const DriverProfilePage = () => {
                   </div>
                   <div className="flex-1">
                     <h2 className="text-xl font-bold text-foreground">{driver.name}</h2>
+                    <div className="flex items-center gap-1 mb-1">
+                      <Star className="w-4 h-4 fill-warning text-warning" />
+                      <span className="font-semibold">{driver.rating ? Number(driver.rating).toFixed(1) : "5.0"}</span>
+                      <span className="text-muted-foreground text-sm">({driver.ratingCount || 0} ratings)</span>
+                    </div>
                     <p className="text-sm text-muted-foreground">{driver.phone}</p>
                     <Button
                       variant="link"
@@ -238,6 +334,72 @@ const DriverProfilePage = () => {
                 </CardContent>
               </Card>
             </Link>
+          </motion.div>
+
+          {/* Ride History Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mt-6 space-y-4"
+          >
+            <h3 className="text-sm font-medium text-muted-foreground px-1">Recent Rides</h3>
+            
+            {isLoadingHistory ? (
+              <div className="text-center py-8 text-muted-foreground">Loading history...</div>
+            ) : rideHistory.length === 0 ? (
+              <Card>
+                <CardContent className="py-8 text-center text-muted-foreground">
+                  <Clock className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p>No completed rides yet</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="space-y-3">
+                {rideHistory.map((ride) => (
+                  <Card key={ride._id || ride.id}>
+                    <CardContent className="p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <p className="font-semibold text-foreground">
+                            {ride.passengerId?.name || "Passenger"}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(ride.completedAt).toLocaleDateString()} • {new Date(ride.completedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                        </div>
+                        <div className="flex flex-col items-end">
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success">
+                            Completed
+                          </span>
+                          {ride.fare && (
+                            <span className="text-sm font-bold mt-1">GH₵ {ride.fare}</span>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
+                        <div className="flex-1 truncate">
+                          <span className="text-foreground/70">From:</span> {ride.pickupLocation}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <div className="flex-1 truncate">
+                          <span className="text-foreground/70">To:</span> {ride.destination}
+                        </div>
+                      </div>
+                      
+                      {ride.rating && (
+                        <div className="mt-3 flex items-center gap-1 text-sm bg-warning/10 text-warning-foreground w-fit px-2 py-1 rounded">
+                          <Star className="w-3 h-3 fill-warning" />
+                          <span>Rated: {ride.rating} stars</span>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </motion.div>
         </PageTransition>
       </main>

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Car, QrCode, ArrowRight } from "lucide-react";
+import { Car, LogIn, UserPlus, ArrowRight, Map } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { PageTransition } from "@/components/common/PageTransition";
@@ -23,24 +23,49 @@ const WelcomePage = () => {
           </motion.div>
 
           <Card className="shadow-lg">
-            <CardContent className="pt-6">
-              <div className="text-center mb-6">
+            <CardContent className="pt-6 space-y-4">
+              {/* View Map */}
+              <div className="text-center mb-4">
                 <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
-                  <QrCode className="w-8 h-8 text-primary" />
+                  <Map className="w-8 h-8 text-primary" />
                 </div>
-                <h2 className="text-xl font-bold text-foreground mb-2">Scan QR to Start</h2>
-                <p className="text-muted-foreground text-sm">
-                  Scan the QR code at your location to register and start accepting ride requests.
+                <h2 className="text-xl font-bold text-foreground mb-2">View Ride Requests</h2>
+                <p className="text-muted-foreground text-sm mb-4">
+                  See all pending ride requests on the map. Login to accept rides.
                 </p>
+                <Link to="/driver/map">
+                  <Button variant="hero" size="lg" className="w-full">
+                    <Map className="w-5 h-5" />
+                    View Map
+                    <ArrowRight className="w-5 h-5" />
+                  </Button>
+                </Link>
               </div>
 
-              <Link to="/driver/scan-qr">
-                <Button variant="hero" size="lg" className="w-full">
-                  <QrCode className="w-5 h-5" />
-                  Scan QR Code
-                  <ArrowRight className="w-5 h-5" />
-                </Button>
-              </Link>
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-border" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-2 text-muted-foreground">Or</span>
+                </div>
+              </div>
+
+              {/* Login/Register */}
+              <div className="space-y-3">
+                <Link to="/driver/login">
+                  <Button variant="outline" size="lg" className="w-full">
+                    <LogIn className="w-5 h-5" />
+                    Login
+                  </Button>
+                </Link>
+                <Link to="/driver/register">
+                  <Button variant="outline" size="lg" className="w-full">
+                    <UserPlus className="w-5 h-5" />
+                    Sign Up as Driver
+                  </Button>
+                </Link>
+              </div>
 
               <div className="mt-6 text-center">
                 <Link to="/" className="text-sm text-muted-foreground hover:text-primary">

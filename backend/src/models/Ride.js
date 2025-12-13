@@ -15,17 +15,37 @@ const rideSchema = new mongoose.Schema(
     locationId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Location',
-      required: [true, 'Location ID is required'],
+      default: null, // Made optional for dynamic locations
     },
     pickupLocation: {
       type: String,
       required: [true, 'Pickup location is required'],
       trim: true,
     },
+    pickupCoordinates: {
+      lat: {
+        type: Number,
+        required: [true, 'Pickup latitude is required'],
+      },
+      lng: {
+        type: Number,
+        required: [true, 'Pickup longitude is required'],
+      },
+    },
     destination: {
       type: String,
       required: [true, 'Destination is required'],
       trim: true,
+    },
+    destinationCoordinates: {
+      lat: {
+        type: Number,
+        default: null,
+      },
+      lng: {
+        type: Number,
+        default: null,
+      },
     },
     requestedTime: {
       type: Date,
@@ -76,6 +96,7 @@ const rideSchema = new mongoose.Schema(
 rideSchema.index({ passengerId: 1, status: 1 });
 rideSchema.index({ driverId: 1, status: 1 });
 rideSchema.index({ status: 1 });
+rideSchema.index({ 'pickupCoordinates.lat': 1, 'pickupCoordinates.lng': 1 });
 
 const Ride = mongoose.model('Ride', rideSchema);
 

@@ -25,15 +25,19 @@ const DashboardPage = () => {
       {/* Header */}
       <header className="bg-card border-b border-border sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/home" className="flex items-center gap-2">
+          <div className="flex items-center gap-2 select-none">
             <img src={comequickLogo} alt="ComeQuick" className="w-10 h-10 object-contain" />
             <span className="text-xl font-bold text-foreground">ComeQuick</span>
-          </Link>
+          </div>
           <Link to="/passenger/profile">
             <Avatar className="w-10 h-10 cursor-pointer hover:ring-2 hover:ring-primary transition-all">
-              <AvatarFallback className="bg-primary text-primary-foreground">
-                {passenger?.name ? getInitials(passenger.name) : "U"}
-              </AvatarFallback>
+              {passenger?.profileImageUrl ? (
+                <img src={passenger.profileImageUrl} alt={passenger.name} className="w-full h-full object-cover" />
+              ) : (
+                <AvatarFallback className="bg-primary text-primary-foreground">
+                  {passenger?.name ? getInitials(passenger.name) : "U"}
+                </AvatarFallback>
+              )}
             </Avatar>
           </Link>
         </div>
@@ -139,7 +143,11 @@ const DashboardPage = () => {
                           <Car className="w-6 h-6 text-primary" />
                         </div>
                         <div className="flex-1">
-                          <p className="font-medium text-foreground">{ride.driver.name}</p>
+                          <p className="font-medium text-foreground">
+                            {typeof ride.driverId === 'object' && ride.driverId?.name 
+                              ? ride.driverId.name 
+                              : 'Driver'}
+                          </p>
                           <p className="text-sm text-muted-foreground">
                             {ride.completedAt && format(ride.completedAt, "MMM d, yyyy • h:mm a")}
                           </p>
