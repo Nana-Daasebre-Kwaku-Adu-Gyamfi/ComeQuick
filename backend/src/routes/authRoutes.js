@@ -4,6 +4,7 @@ import {
   signup,
   login,
   getMe,
+  adminLogin,
 } from '../controllers/authController.js';
 import { protectPassenger } from '../middleware/auth.js';
 import { handleValidationErrors } from '../middleware/validation.js';
@@ -28,6 +29,7 @@ const loginValidation = [
 
 router.post('/signup', authLimiter, signupValidation, handleValidationErrors, signup);
 router.post('/login', authLimiter, loginValidation, handleValidationErrors, login);
+router.post('/admin/login', authLimiter, loginValidation, handleValidationErrors, adminLogin);
 router.get('/me', protectPassenger, getMe);
 
 export default router;

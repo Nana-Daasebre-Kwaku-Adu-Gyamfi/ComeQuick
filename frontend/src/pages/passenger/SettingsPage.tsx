@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Moon, Bell, Shield, HelpCircle, LogOut, ChevronRight } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
+import { useRideStore } from "@/store/rideStore";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -30,8 +31,11 @@ const SettingsPage = () => {
     }
   };
 
+
+
   const handleLogout = () => {
     logout();
+    useRideStore.getState().reset();
     navigate("/");
   };
 

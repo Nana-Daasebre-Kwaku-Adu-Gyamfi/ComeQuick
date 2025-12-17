@@ -72,8 +72,7 @@ const App = () => (
           {/* Passenger Routes */}
           <Route path="/passenger/login" element={<LoginPage />} />
           <Route path="/passenger/signup" element={<SignupPage />} />
-          <Route path="/passenger/login" element={<LoginPage />} />
-          <Route path="/passenger/signup" element={<SignupPage />} />
+
           <Route path="/passenger/dashboard" element={<PassengerRoute><DashboardPage /></PassengerRoute>} />
           <Route path="/passenger/request-ride" element={<PassengerRoute><RequestRidePage /></PassengerRoute>} />
           <Route path="/passenger/active-ride" element={<PassengerRoute><ActiveRidePage /></PassengerRoute>} />

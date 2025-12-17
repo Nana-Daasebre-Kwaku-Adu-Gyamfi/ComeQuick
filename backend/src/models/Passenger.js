@@ -29,7 +29,11 @@ const passengerSchema = new mongoose.Schema(
     },
     isVerified: {
       type: Boolean,
-      default: true, // Users are verified by default (no OTP)
+      default: false,
+    },
+    isSuspended: {
+      type: Boolean,
+      default: false,
     },
     profileImageUrl: {
       type: String,

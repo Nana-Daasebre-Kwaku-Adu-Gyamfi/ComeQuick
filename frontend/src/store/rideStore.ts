@@ -10,6 +10,7 @@ interface RideStore {
   setActiveRide: (ride: Ride | null) => void;
   addToHistory: (ride: Ride) => void;
   clearRide: () => void;
+  reset: () => void;
 }
 
 export const useRideStore = create<RideStore>()(
@@ -23,6 +24,12 @@ export const useRideStore = create<RideStore>()(
       addToHistory: (ride) =>
         set((state) => ({ rideHistory: [...state.rideHistory, ride] })),
       clearRide: () => set({ currentRequest: null, activeRide: null }),
+      reset: () =>
+        set({
+          currentRequest: null,
+          activeRide: null,
+          rideHistory: [],
+        }),
     }),
     {
       name: 'comequick-ride',

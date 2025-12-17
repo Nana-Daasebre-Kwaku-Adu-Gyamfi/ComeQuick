@@ -1,4 +1,5 @@
 import Passenger from '../models/Passenger.js';
+import Admin from '../models/Admin.js';
 import { generateToken } from '../utils/generateToken.js';
 import logger from '../utils/logger.js';
 
@@ -44,7 +45,7 @@ export const signup = async (req, res, next) => {
     logger.error(`Signup error: ${error.message}`);
     // Handle duplicate key error
     if (error.code === 11000) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: 'Email already exists',
         field: Object.keys(error.keyPattern)[0]
       });
@@ -107,7 +108,48 @@ export const getMe = async (req, res, next) => {
       passenger,
     });
   } catch (error) {
-    logger.error(`Get me error: ${error.message}`);
+    next(error);
+  }
+};
+
+// @desc    Login admin
+// @route   POST /api/auth/admin/login
+// @access  Public
+export const adminLogin = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const normalizedEmail = email?.toLowerCase().trim();
+
+    // Check if admin exists
+    const admin = await Admin.findOne({ email: normalizedEmail });
+
+    if (!admin) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    // Check password
+    const isMatch = await admin.matchPassword(password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    // Generate token
+    const token = generateToken(admin._id);
+
+    logger.info(`Admin logged in: ${email}`);
+
+    res.json({
+      message: 'Login successful',
+      token,
+      admin: {
+        id: admin._id,
+        name: admin.name,
+        email: admin.email,
+        role: 'admin'
+      },
+    });
+  } catch (error) {
+    logger.error(`Admin login error: ${error.message}`);
     next(error);
   }
 };

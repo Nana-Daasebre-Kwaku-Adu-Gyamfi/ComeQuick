@@ -52,13 +52,64 @@ const DriverDashboardPage = () => {
       return;
     }
     loadRequests();
-    const interval = setInterval(loadRequests, 10000);
+    checkActiveRide();
+    const interval = setInterval(() => {
+      loadRequests();
+      checkActiveRide();
+    }, 5000); // Check every 5 seconds
     return () => clearInterval(interval);
   }, [driver, navigate]);
 
+  const checkActiveRide = async () => {
+    if (!driver) return;
+    try {
+      const response = await fetch('http://localhost:3000/api/rides/driver/active', {
+        headers: {
+          'Authorization': `Bearer ${driver.sessionToken}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const ride = data.ride;
+        // Update store with active ride
+        setCurrentRide({
+          id: ride._id,
+          request: {
+            requestId: ride._id,
+            passengerId: ride.passengerId._id,
+            passengerName: ride.passengerId.name,
+            passengerProfileImageUrl: ride.passengerId.profileImageUrl,
+            pickupLocation: ride.pickupLocation,
+            destination: ride.destination,
+            requestedTime: new Date(ride.requestedTime),
+            createdAt: new Date(ride.createdAt),
+          },
+          acceptedAt: new Date(ride.acceptedAt),
+          status: ride.status === 'matched' ? 'accepted' : ride.status as any,
+        });
+      } else if (response.status === 404) {
+        // No active ride (cancelled or completed)
+        // Only clear if we currently think we have a ride
+        // We need to access the LATEST currentRide, which might be stale in closure
+        // But setState inside hook usage is tricky if we depend on previous state.
+        // However, we can use the state directly if we trust the closure or refs.
+        // The safest way is to clear it if we receive a 404.
+        const storedRide = useDriverStore.getState().currentRide;
+        if (storedRide) {
+          toast.info("Ride has ended or was cancelled");
+          setCurrentRide(null);
+        }
+      }
+    } catch (error) {
+      console.error('Error checking active ride:', error);
+    }
+  };
+
   const loadRequests = async () => {
     if (!driver) return;
-    setIsLoading(true);
+    // Don't show loading spinner on background polls for better UX
+    // setIsLoading(true); 
     try {
       const response = await fetch('http://localhost:3000/api/rides/pending', {
         headers: {
@@ -74,7 +125,6 @@ const DriverDashboardPage = () => {
       }
     } catch (error) {
       console.error('Error loading requests:', error);
-      toast.error("Failed to load requests");
     } finally {
       setIsLoading(false);
     }
@@ -137,7 +187,8 @@ const DriverDashboardPage = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to complete ride');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to complete ride');
       }
 
       setCurrentRide(null);

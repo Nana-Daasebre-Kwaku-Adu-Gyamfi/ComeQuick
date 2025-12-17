@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
   Users, Car, Shield, LogOut, UserX, CheckCircle, 
-  XCircle, Search, RefreshCw 
+  XCircle, Search 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,76 +13,161 @@ import { PageTransition } from "@/components/common/PageTransition";
 import { toast } from "sonner";
 import comequickLogo from "@/assets/comequick-logo.png";
 
-// Mock data for admin
-const MOCK_PASSENGERS = [
-  { id: "1", name: "John Doe", email: "john@example.com", phone: "+233 24 123 4567", status: "active" },
-  { id: "2", name: "Jane Smith", email: "jane@example.com", phone: "+233 24 234 5678", status: "active" },
-  { id: "3", name: "Kwame Mensah", email: "kwame@example.com", phone: "+233 24 345 6789", status: "suspended" },
-];
-
-const MOCK_DRIVERS = [
-  { id: "1", name: "Kofi Driver", phone: "+233 24 111 2222", carModel: "Toyota Corolla", licensePlate: "GR-1234-20", verified: true },
-  { id: "2", name: "Ama Driver", phone: "+233 24 333 4444", carModel: "Honda Civic", licensePlate: "GR-5678-21", verified: false },
-  { id: "3", name: "Yaw Driver", phone: "+233 24 555 6666", carModel: "Hyundai Elantra", licensePlate: "GR-9012-22", verified: true },
-];
-
 const AdminDashboardPage = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"passengers" | "drivers">("passengers");
-  const [passengers, setPassengers] = useState(MOCK_PASSENGERS);
-  const [drivers, setDrivers] = useState(MOCK_DRIVERS);
+  const [passengers, setPassengers] = useState<any[]>([]);
+  const [drivers, setDrivers] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem("admin-token");
+    return {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    };
+  };
 
   useEffect(() => {
     const isAdmin = localStorage.getItem("admin-auth");
     if (!isAdmin) {
       navigate("/admin");
+    } else {
+      fetchData();
     }
   }, [navigate]);
 
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      await Promise.all([fetchPassengers(), fetchDrivers()]);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchPassengers = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/admin/passengers', {
+        headers: getAuthHeaders(),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setPassengers(data);
+      }
+    } catch (error) {
+      toast.error("Failed to fetch passengers");
+    }
+  };
+
+  const fetchDrivers = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/admin/drivers', {
+        headers: getAuthHeaders(),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setDrivers(data);
+      }
+    } catch (error) {
+      toast.error("Failed to fetch drivers");
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("admin-auth");
+    localStorage.removeItem("admin-token");
+    localStorage.removeItem("admin-info");
     navigate("/admin");
   };
 
-  const handleRemovePassenger = (id: string) => {
-    setPassengers(passengers.filter((p) => p.id !== id));
-    toast.success("Passenger removed successfully");
+  const handleRemovePassenger = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this passenger?")) return;
+    
+    try {
+      const response = await fetch(`http://localhost:3000/api/admin/passengers/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
+
+      if (response.ok) {
+        setPassengers(passengers.filter((p) => p._id !== id));
+        toast.success("Passenger removed successfully");
+      } else {
+        toast.error("Failed to delete passenger");
+      }
+    } catch (error) {
+      toast.error("Error deleting passenger");
+    }
   };
 
-  const handleTogglePassengerStatus = (id: string) => {
-    setPassengers(
-      passengers.map((p) =>
-        p.id === id
-          ? { ...p, status: p.status === "active" ? "suspended" : "active" }
-          : p
-      )
-    );
-    toast.success("Passenger status updated");
+  const handleTogglePassengerStatus = async (id: string) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/admin/passengers/${id}/suspend`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setPassengers(passengers.map((p) => (p._id === id ? data.passenger : p)));
+        toast.success(`Passenger ${data.passenger.isSuspended ? 'suspended' : 'activated'}`);
+      }
+    } catch (error) {
+      toast.error("Failed to update status");
+    }
   };
 
-  const handleVerifyDriver = (id: string) => {
-    setDrivers(
-      drivers.map((d) => (d.id === id ? { ...d, verified: true } : d))
-    );
-    toast.success("Driver verified successfully");
+  const handleVerifyDriver = async (id: string) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/admin/drivers/${id}/verify`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setDrivers(drivers.map((d) => (d._id === id ? data.driver : d)));
+        toast.success("Driver verified successfully");
+      }
+    } catch (error) {
+      toast.error("Failed to verify driver");
+    }
   };
 
-  const handleRemoveDriver = (id: string) => {
-    setDrivers(drivers.filter((d) => d.id !== id));
-    toast.success("Driver removed successfully");
+  const handleRemoveDriver = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this driver?")) return;
+
+    try {
+      const response = await fetch(`http://localhost:3000/api/admin/drivers/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
+
+      if (response.ok) {
+        setDrivers(drivers.filter((d) => d._id !== id));
+        toast.success("Driver removed successfully");
+      } else {
+        toast.error("Failed to delete driver");
+      }
+    } catch (error) {
+      toast.error("Error deleting driver");
+    }
   };
 
   const filteredPassengers = passengers.filter(
     (p) =>
-      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.email.toLowerCase().includes(searchTerm.toLowerCase())
+      p.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const filteredDrivers = drivers.filter(
     (d) =>
-      d.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      d.licensePlate.toLowerCase().includes(searchTerm.toLowerCase())
+      d.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      d.licensePlate?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -223,11 +308,15 @@ const AdminDashboardPage = () => {
                   <div className="space-y-4">
                     {filteredPassengers.map((passenger) => (
                       <div
-                        key={passenger.id}
+                        key={passenger._id}
                         className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg"
                       >
-                        <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                          <Users className="w-6 h-6 text-primary" />
+                        <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center overflow-hidden">
+                           {passenger.profileImageUrl ? (
+                             <img src={passenger.profileImageUrl} className="w-full h-full object-cover"/>
+                           ) : (
+                             <Users className="w-6 h-6 text-primary" />
+                           )}
                         </div>
                         <div className="flex-1">
                           <p className="font-medium text-foreground">{passenger.name}</p>
@@ -235,28 +324,31 @@ const AdminDashboardPage = () => {
                           <p className="text-sm text-muted-foreground">{passenger.phone}</p>
                         </div>
                         <Badge
-                          variant={passenger.status === "active" ? "default" : "destructive"}
+                          variant={!passenger.isSuspended ? "default" : "destructive"}
                         >
-                          {passenger.status}
+                          {!passenger.isSuspended ? "Active" : "Suspended"}
                         </Badge>
                         <div className="flex gap-2">
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleTogglePassengerStatus(passenger.id)}
+                            onClick={() => handleTogglePassengerStatus(passenger._id)}
                           >
-                            {passenger.status === "active" ? "Suspend" : "Activate"}
+                            {!passenger.isSuspended ? "Suspend" : "Activate"}
                           </Button>
                           <Button
                             variant="destructive"
                             size="sm"
-                            onClick={() => handleRemovePassenger(passenger.id)}
+                            onClick={() => handleRemovePassenger(passenger._id)}
                           >
                             <UserX className="w-4 h-4" />
                           </Button>
                         </div>
                       </div>
                     ))}
+                    {filteredPassengers.length === 0 && (
+                        <p className="text-center text-muted-foreground py-4">No passengers found</p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -269,11 +361,15 @@ const AdminDashboardPage = () => {
                   <div className="space-y-4">
                     {filteredDrivers.map((driver) => (
                       <div
-                        key={driver.id}
+                        key={driver._id}
                         className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg"
                       >
-                        <div className="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center">
-                          <Car className="w-6 h-6 text-success" />
+                         <div className="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center overflow-hidden">
+                           {driver.profileImageUrl ? (
+                             <img src={driver.profileImageUrl} className="w-full h-full object-cover"/>
+                           ) : (
+                             <Car className="w-6 h-6 text-success" />
+                           )}
                         </div>
                         <div className="flex-1">
                           <p className="font-medium text-foreground">{driver.name}</p>
@@ -300,7 +396,7 @@ const AdminDashboardPage = () => {
                             <Button
                               variant="default"
                               size="sm"
-                              onClick={() => handleVerifyDriver(driver.id)}
+                              onClick={() => handleVerifyDriver(driver._id)}
                             >
                               <CheckCircle className="w-4 h-4" />
                               Verify
@@ -309,13 +405,16 @@ const AdminDashboardPage = () => {
                           <Button
                             variant="destructive"
                             size="sm"
-                            onClick={() => handleRemoveDriver(driver.id)}
+                            onClick={() => handleRemoveDriver(driver._id)}
                           >
                             <UserX className="w-4 h-4" />
                           </Button>
                         </div>
                       </div>
                     ))}
+                    {filteredDrivers.length === 0 && (
+                        <p className="text-center text-muted-foreground py-4">No drivers found</p>
+                    )}
                   </div>
                 </CardContent>
               </Card>

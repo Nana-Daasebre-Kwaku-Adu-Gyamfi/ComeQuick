@@ -7,13 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import comequickLogo from "@/assets/comequick-logo.png";
-
-// Simple admin store for demo
-const ADMIN_CREDENTIALS = {
-  email: "admin@comequick.com",
-  password: "admin123",
-};
 
 const AdminLoginPage = () => {
   const navigate = useNavigate();
@@ -26,18 +19,31 @@ const AdminLoginPage = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    try {
+      const response = await fetch('http://localhost:3000/api/auth/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed');
+      }
+
       localStorage.setItem("admin-auth", "true");
+      localStorage.setItem("admin-token", data.token);
+      localStorage.setItem("admin-info", JSON.stringify(data.admin));
+      
       toast.success("Welcome, Admin!");
       navigate("/admin/dashboard");
-    } else {
-      toast.error("Invalid credentials");
+    } catch (error: any) {
+      toast.error(error.message || "Invalid credentials");
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return (
@@ -97,18 +103,14 @@ const AdminLoginPage = () => {
               </Button>
             </form>
 
-            <div className="mt-6 p-4 bg-muted rounded-lg">
-              <p className="text-sm text-muted-foreground text-center">
-                <strong>Demo Credentials:</strong><br />
-                Email: admin@comequick.com<br />
-                Password: admin123
-              </p>
-            </div>
+
           </CardContent>
         </Card>
       </motion.div>
     </div>
   );
 };
-
+//admin@gmail.com...Admin.password
+//test@gmail.com...password123
+//doe@gmail.com...+233123456789...joe123 
 export default AdminLoginPage;

@@ -115,6 +115,15 @@ const SplashScreen = () => {
                   Log in
                 </button>
               </p>
+
+              <div className="text-center pt-4">
+                <button 
+                  onClick={() => navigate("/admin")}
+                  className="text-white/50 text-xs hover:text-white transition-colors"
+                >
+                  Login as Admin
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}
