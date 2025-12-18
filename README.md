@@ -33,30 +33,28 @@ We recommend opening the app in **two different browser windows** (or one normal
 
 ### Step 2: Requesting a Ride (Window 1)
 1.  Click **"Request a Ride"**.
-2.  Choose a pickup location (e.g., "Library") and destination (e.g., "Student Center").
-3.  Click **"Find Driver"**.
+2.  **Pinpoint Pickup**: You can use your live location, enter an address, or click **"Map"** to drag a pin to your exact spot.
+    *   *Note: This ensures drivers find you exactly where you are standing.*
+3.  Enter your destination and click **"Request Ride Now"**.
 4.  You will see a "Searching for driver..." screen.
 
 ### Step 3: Driver Acceptance (Window 2)
-1.  In your second window, go to the **Driver Portal** or `/driver/login`.
-2.  Log in as a driver (Use demo credentials or register a new one).
-    *   *Demo Driver Phone*: `0555555555` / *Password*: `password` (if pre-seeded).
-    *   *Or Register*: Click "Register as Driver", fill details, and login.
-3.  Go to the **Dashboard**. You should see "Waiting Passengers (1)" in the list.
-4.  You will see the passenger's name and **Profile Photo** in the request card.
-5.  Click **"Accept Ride"**.
+1.  In your second window, go to the **Driver Portal**.
+2.  Log in as a driver.
+3.  **Visual Dispatch**: Click **"View Map"** in the header to see all waiting passengers on a live map.
+4.  Or stay on the Dashboard to see the list. Click **"Accept Ride"** to take a request.
 
 ### Step 4: The Ride (Both Windows)
-1.  **Driver View**: You will see "Active Ride" with the passenger's details.
+1.  **Driver View**: Click **"Navigate to Pickup"**. 
+    *   *Technical Note: This opens Google Maps with a pre-calculated route from your current GPS position to the passenger's pinpointed location.*
 2.  **Passenger View**: Your screen automatically updates!
     *   It now shows: "Driver accepted your ride!".
     *   You will see the **Driver's details** and their **Photo**.
-    *   *Technical Note: This real-time update uses a polling mechanism to fetch the latest data from our database.*
 
 ### Step 5: Completion & Rating
-1.  **Driver View**: Once you "arrive", click **"Complete Ride"**.
+1.  **Driver View**: Once you arrive, click **"Complete Ride"**.
 2.  **Passenger View**: You will be prompted to **Rate the Driver**.
-3.  Select a star rating (1-5) and submit. This updates the driver's overall rating in the system.
+3.  Select a quality label (Excellent, Great, etc.) and submit. This updates the driver's overall rating.
 
 ---
 
@@ -64,8 +62,9 @@ We recommend opening the app in **two different browser windows** (or one normal
 
 For those interested in the technology:
 
-*   **Real-Time Data**: The app frequently checks the database (MongoDB) to see if a driver has accepted a request, ensuring you don't stare at a static screen.
-*   **Image Storage**: We use an external API called **Cloudinary**. When you upload a photo, it's sent to their secure servers, and we just save the link. This keeps our database fast and lightweight.
-*   **Maps**: The interactive maps are powered by **Leaflet**, allowing us to place markers dynamically based on where users say they are.
+*   **Real-Time Data**: The app frequently checks the database (MongoDB) to see if a driver has accepted a request via polling.
+*   **Precision Location**: We use the **Geolocation API** combined with **Leaflet** to allow for exact sub-meter pickup accuracy.
+*   **Smart Navigation**: Driver navigation is powered by **Google Maps Directions API**, ensuring routes are based on live traffic and current driver position.
+*   **Image Storage**: We use **Cloudinary** for secure, lightning-fast profile photo hosting.
 
 Enjoy your ride with **ComeQuick**! 🚗💨

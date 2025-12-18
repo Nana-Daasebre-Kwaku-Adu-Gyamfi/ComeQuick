@@ -73,22 +73,51 @@ ComeQuick-1/
 *   **Endpoint**: `/api/upload/profile`
 *   **Flow**: Frontend sends `FormData` -> Backend Multer middleware -> Cloudinary Upload -> URL saved to MongoDB User Document.
 
-## 5. API Reference (Core Endpoints)
+### Maps and Geospatial Logic
+-**Pinpoint Pickup (Passenger)**: Implemented via a `MapPicker` component utilizing `Leaflet`. It features:
+    - Initial centering on device GPS via `navigator.geolocation`.
+    - Draggable markers with real-time coordinate updates.
+    - Reverse geocoding via Nominatim API to convert coordinates back to readable addresses.
+-**Visual Dispatch (Driver)**: A dedicated `DriverMapPage` that:
+    - Fetches all `pending` rides from the backend.
+    - Renders custom HTML markers for each request, including passenger profile photos.
+    - Filters out orphaned requests (rides with null `passengerId`) to ensure data integrity.
+-**External Navigation**: Integrated with **Google Maps Directions API**.
+    - Proactively fetches high-accuracy driver GPS coordinates before launch.
+    - Generates a `directions` URL passing both `origin` (driver) and `destination` (passenger) to provide live turn-by-turn routing.
+
+## 5. Security and Data Integrity
+
+### Data Isolation
+- **Store Resets**: All Zustand stores (Ride, Auth, Driver) are explicitly reset on logout to prevent sensitive data from persisting across different user sessions on the same browser.
+- **Backend Truth**: Ride history is fetched directly from the `/api/rides/history` endpoint on dashboard mount, ensuring users only see their own unique data.
+
+### Request Validation
+- **Concurrency Control**: Logic implemented to prevent passengers from creating multiple simultaneous ride requests.
+- **Orphan Protection**: UI components implement null-checks (`?.`) for nested data like `passengerId` or `driverId` to prevent crashes if account deletion occurs while a request is active.
+
+## 6. API Reference (Core Endpoints)
 
 ### Ride API
-- `POST /api/rides/request`: Create new ride.
-- `GET /api/rides/active`: Get current passenger's active ride.
-- `GET /api/rides/pending`: Get all available rides (Driver only).
+- `POST /api/rides/request`: Create ride with `pickupCoordinates`.
+- `GET /api/rides/active`: Get current passenger's active ride (returns 200 with null if none, preventing console noise).
+- `GET /api/rides/pending`: Get all available rides, filtered for active users.
+- `GET /api/rides/history`: Retrieve unique ride history for the authenticated user.
 - `PUT /api/rides/:id/accept`: Accept a ride (Driver only).
-- `PUT /api/rides/:id/rate`: Rate a driver.
+- `PUT /api/rides/:id/complete`: Finalize a ride.
+- `PUT /api/rides/:id/rate`: Rate a driver with textual labels.
 
-### Auth API
-- `POST /api/auth/passenger/signup`
+### Auth & Upload API
 - `POST /api/auth/passenger/login`
 - `POST /api/auth/driver/login`
+- `POST /api/upload/profile`: Handles profile image processing.
 
-## 6. Environment Setup
+## 7. Environment Setup
 Required `.env` variables in backend:
 - `MONGODB_URI`: Database connection string.
 - `JWT_SECRET`: Secret for signing tokens.
 - `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`: For image storage.
+- `PORT`: Server port (defaults to 5000).
+
+Required `.env` variables in frontend:
+- `VITE_API_URL`: Base URL for the backend API (e.g., hosted Render URL).
