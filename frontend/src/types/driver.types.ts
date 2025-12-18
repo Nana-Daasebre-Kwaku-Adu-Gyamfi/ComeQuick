@@ -5,10 +5,10 @@ export interface DriverProfile {
   carModel: string;
   carColor: string;
   licensePlate: string;
-  sessionToken?: string; // Added on frontend after login
-  locationId?: string; // Optional, set when driver goes online
-  locationName?: string; // Optional, set when driver goes online
-  verifiedAt?: Date; // Optional, set after verification
+  sessionToken?: string; 
+  locationId?: string; 
+  locationName?: string; 
+  verifiedAt?: Date; 
   isVerified?: boolean;
   isAvailable?: boolean;
   rating?: number;

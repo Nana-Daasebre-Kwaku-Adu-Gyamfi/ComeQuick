@@ -69,12 +69,28 @@ For those interested in the technology:
 
 ---
 
+## Extra details of things used that I learnt from
+* **Using Zustand**
+1. Persistent Login (Session Management)
+It stores the logged-in user's information (name, phone, profile photo) and their JWT Token. Because we use the persist middleware, this data is saved to the browser's storage.
+2. Eliminating "Prop Drilling"
+Without Zustand, if the 
+Dashboard
+ needs the passenger's name, and the 
+Profile
+ page needs it too, you'd have to pass that data through every single intermediate component.
+3. Real-Time Ride Coordination
+In your rideStore.ts, Zustand keeps track of the Active Ride.
+4. Coordinated Logouts
+When you click "Log Out," Zustand handles the cleanup. It clears the passenger, driver, and token stores simultaneously across the whole app.
+In short: Zustand is the "brain" of your frontend that keeps all your pages synced with the same data.
+
 ## 🛠️ Built With AI Assistance
 
 This project leverages modern AI technologies for efficiency and precision:
 - **Core Frameworks**: Initial scaffolding via **Lovable.dev**.
 - **Design & Branding**: AI-assisted logo and palette design using **Gemini** and **Canva**.
-- **Development & Debugging**: Logic optimization and map integration supported by **Claude** and **Antigravity**.
+- **Development & Debugging**: Logic optimization and map integration supported by **Claude**.
 
 *For full technical details, see [TECHNICAL_DOCS.md](TECHNICAL_DOCS.md).*
 

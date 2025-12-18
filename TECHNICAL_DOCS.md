@@ -132,7 +132,6 @@ In accordance with transparency guidelines, the following AI tools and platforms
 | **Gemini (Image Generator)** | Google | Used to generate the conceptual assets and base imagery for the **ComeQuick logo** and splash screen branding. |
 | **Canva (AI Design Tools)** | Canva | Used to refine the logo design, pick a cohesive and modern color palette, and design the consistent visual theme across the web-app. |
 | **Claude** | Anthropic | Utilized for deep debugging of complex geospatial logic, specifically resolving initial rendering issues with **Leaflet** maps and ensuring smooth integration with the **Google Maps GPS API**. |
-| **Antigravity** | Google DeepMind | Acted as a primary AI coding assistant for pair programming, refactoring components (e.g., modularizing `MapPicker`), implementing backend security fixes (null-checks, orphaned data filtering), and final documentation. |
 
 ### Post-Processing & Verification
 All AI-generated code and design assets underwent rigorous human validation:

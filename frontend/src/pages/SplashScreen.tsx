@@ -9,7 +9,6 @@ const SplashScreen = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Show splash for 2.5 seconds, then transition
     const splashTimer = setTimeout(() => {
       setShowWelcome(true);
     }, 2500);
@@ -29,7 +28,6 @@ const SplashScreen = () => {
     <div className="min-h-screen bg-[hsl(207,75%,45%)] relative overflow-hidden">
       <AnimatePresence mode="wait">
         {!showWelcome ? (
-          // Splash Screen - Just Logo
           <motion.div
             key="splash"
             className="absolute inset-0 flex items-center justify-center"
@@ -50,7 +48,6 @@ const SplashScreen = () => {
             </motion.div>
           </motion.div>
         ) : (
-          // Welcome Screen with slide-up animation
           <motion.div
             key="welcome"
             className="absolute inset-0 flex flex-col"
@@ -58,7 +55,6 @@ const SplashScreen = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
           >
-            {/* Logo moves up */}
             <motion.div 
               className="flex-1 flex items-center justify-center pt-8"
               initial={{ y: 0 }}

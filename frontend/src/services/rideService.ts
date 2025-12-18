@@ -12,7 +12,6 @@ const handleResponse = async (response: Response) => {
     const data = await response.json();
 
     if (!response.ok) {
-        // Log detailed error information
         console.error('API Error Response:', {
             status: response.status,
             statusText: response.statusText,
@@ -22,7 +21,6 @@ const handleResponse = async (response: Response) => {
         // Log the full data object to see structure
         console.error('Full error data:', JSON.stringify(data, null, 2));
 
-        // Create detailed error message
         let errorMessage = data.message || 'An error occurred';
 
         if (data.errors) {
@@ -114,9 +112,7 @@ export const rideService = {
         return result.rides;
     },
 
-    // Poll for ride status (check if driver accepted)
     async pollRideStatus(rideId: string) {
-        // Re-use active ride endpoint
         return this.getActiveRide();
     },
 };
