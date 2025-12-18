@@ -36,14 +36,10 @@ router.put('/:id/rate', protectPassenger, [
 ], handleValidationErrors, rateDriver);
 
 // Driver routes (pending rides is public to encourage driver signups)
-const completeRideValidation = [
-  body('fare').optional().isNumeric().withMessage('Fare must be a number'),
-];
-
-router.get('/pending', getPendingRides); 
+router.get('/pending', getPendingRides);
 router.put('/:id/accept', protectDriver, acceptRide);
 router.put('/:id/start', protectDriver, startRide);
-router.put('/:id/complete', protectDriver, completeRideValidation, handleValidationErrors, completeRide);
+router.put('/:id/complete', protectDriver, completeRide);
 router.get('/driver/active', protectDriver, getDriverActiveRide);
 router.get('/driver/history', protectDriver, getDriverRideHistory);
 

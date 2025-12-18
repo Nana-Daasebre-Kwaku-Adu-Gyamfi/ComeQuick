@@ -269,7 +269,6 @@ export const startRide = async (req, res, next) => {
 export const completeRide = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { fare } = req.body;
 
     console.log('=== COMPLETE RIDE ===');
     console.log('Ride ID:', id);
@@ -296,7 +295,6 @@ export const completeRide = async (req, res, next) => {
 
     ride.status = 'completed';
     ride.completedAt = new Date();
-    if (fare) ride.fare = fare;
     await ride.save();
 
     const driver = await Driver.findById(req.driver._id);

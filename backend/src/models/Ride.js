@@ -15,7 +15,7 @@ const rideSchema = new mongoose.Schema(
     locationId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Location',
-      default: null, 
+      default: null,
     },
     pickupLocation: {
       type: String,
@@ -70,10 +70,6 @@ const rideSchema = new mongoose.Schema(
     },
     cancellationReason: {
       type: String,
-      default: null,
-    },
-    fare: {
-      type: Number,
       default: null,
     },
     rating: {
