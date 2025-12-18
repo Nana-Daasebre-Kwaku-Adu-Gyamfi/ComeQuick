@@ -27,7 +27,7 @@ const passengerSchema = new mongoose.Schema(
       required: [true, 'Password is required'],
       minlength: [6, 'Password must be at least 6 characters'],
       match: [/^(?=.*[a-zA-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{6,}$/, 'Password must contain at least one letter and one special character'],
-      select: false, // Don't return password by default
+      select: false, 
     },
     isVerified: {
       type: Boolean,
@@ -47,7 +47,8 @@ const passengerSchema = new mongoose.Schema(
   }
 );
 
-// Hash password before saving
+// AI generated code
+// Hashing password using bycryptjs
 passengerSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     return next();
@@ -62,7 +63,7 @@ passengerSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// Remove password from JSON output
+// Taking out password from JSON output
 passengerSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;

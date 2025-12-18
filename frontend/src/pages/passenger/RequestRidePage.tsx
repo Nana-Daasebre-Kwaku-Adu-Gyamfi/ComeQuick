@@ -88,7 +88,6 @@ const MapPicker = ({
       mapInstance.current = map;
       markerInstance.current = marker;
       
-      // Fix for grey tiles/missing layout
       map.invalidateSize();
     }, 200);
 
@@ -198,8 +197,6 @@ const RequestRidePage = () => {
   };
 
   const handleOpenMap = async () => {
-    // If we don't have a pinpointed mapLocation yet, try to get live location first
-    // to ensure the map opens exactly where the user is
     if (!mapLocation) {
       if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
@@ -213,7 +210,6 @@ const RequestRidePage = () => {
             setIsPinpointing(true);
           },
           () => {
-            // If geolocation fails, still open the map at the last known/default location
             setIsPinpointing(true);
           },
           { enableHighAccuracy: true, timeout: 3000 }

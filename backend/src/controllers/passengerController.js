@@ -1,9 +1,9 @@
 import Passenger from '../models/Passenger.js';
 import logger from '../utils/logger.js';
 
-// @desc    Get passenger profile
-// @route   GET /api/passengers/profile
-// @access  Private
+// Get passenger profile
+// GET /api/passengers/profile
+// Private
 export const getProfile = async (req, res, next) => {
   try {
     const passenger = await Passenger.findById(req.passenger._id);
@@ -14,9 +14,9 @@ export const getProfile = async (req, res, next) => {
   }
 };
 
-// @desc    Update passenger profile
-// @route   PUT /api/passengers/profile
-// @access  Private
+// Update passenger profile
+// PUT /api/passengers/profile
+// Private
 export const updateProfile = async (req, res, next) => {
   try {
     const { name, phone, profileImageUrl } = req.body;

@@ -2,9 +2,8 @@ import Ride from '../models/Ride.js';
 import Driver from '../models/Driver.js';
 import logger from '../utils/logger.js';
 
-// @desc    Create a ride request
-// @route   POST /api/rides/request
-// @access  Private (Passenger)
+// Create a ride request
+// POST /api/rides/request
 export const createRideRequest = async (req, res, next) => {
   try {
     const { locationId, pickupLocation, pickupCoordinates, destination, destinationCoordinates, requestedTime } = req.body;
@@ -63,7 +62,6 @@ export const createRideRequest = async (req, res, next) => {
       status: 'pending',
     });
 
-    // Populate passenger info, skip locationId since it's optional and may not have a model
     const populatedRide = await Ride.findById(ride._id)
       .populate('passengerId', 'name phone');
 
@@ -90,9 +88,8 @@ export const createRideRequest = async (req, res, next) => {
   }
 };
 
-// @desc    Get passenger's active ride
-// @route   GET /api/rides/active
-// @access  Private (Passenger)
+// Get passenger's active ride
+// GET /api/rides/active
 export const getActiveRide = async (req, res, next) => {
   try {
     const ride = await Ride.findOne({
@@ -114,9 +111,8 @@ export const getActiveRide = async (req, res, next) => {
   }
 };
 
-// @desc    Get passenger's ride history
-// @route   GET /api/rides/history
-// @access  Private (Passenger)
+// Get passenger's ride history
+// GET /api/rides/history
 export const getRideHistory = async (req, res, next) => {
   try {
     const rides = await Ride.find({
@@ -135,9 +131,8 @@ export const getRideHistory = async (req, res, next) => {
   }
 };
 
-// @desc    Cancel a ride
-// @route   PUT /api/rides/:id/cancel
-// @access  Private (Passenger)
+// Cancel a ride
+// PUT /api/rides/:id/cancel
 export const cancelRide = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -182,9 +177,8 @@ export const cancelRide = async (req, res, next) => {
   }
 };
 
-// @desc    Accept a ride request (Driver)
-// @route   PUT /api/rides/:id/accept
-// @access  Private (Driver)
+// Accept a ride request (Driver)
+// PUT /api/rides/:id/accept
 export const acceptRide = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -195,12 +189,6 @@ export const acceptRide = async (req, res, next) => {
     const driver = await Driver.findById(req.driver._id);
     console.log('Driver found:', driver ? driver.name : 'NOT FOUND');
     console.log('Driver isAvailable:', driver?.isAvailable);
-
-    // Temporarily disabled for development - allow drivers to accept multiple rides
-    // if (!driver.isAvailable) {
-    //   console.log('ERROR: Driver is not available');
-    //   return res.status(400).json({ message: 'Driver is not available' });
-    // }
 
     const ride = await Ride.findById(id);
     console.log('Ride found:', ride ? ride._id : 'NOT FOUND');
@@ -243,9 +231,8 @@ export const acceptRide = async (req, res, next) => {
   }
 };
 
-// @desc    Start a ride (Driver)
-// @route   PUT /api/rides/:id/start
-// @access  Private (Driver)
+// Start a ride (Driver)
+// PUT /api/rides/:id/start
 export const startRide = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -277,9 +264,8 @@ export const startRide = async (req, res, next) => {
   }
 };
 
-// @desc    Complete a ride (Driver)
-// @route   PUT /api/rides/:id/complete
-// @access  Private (Driver)
+// Complete a ride (Driver)
+// PUT /api/rides/:id/complete
 export const completeRide = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -337,9 +323,8 @@ export const completeRide = async (req, res, next) => {
   }
 };
 
-// @desc    Get driver's active ride
-// @route   GET /api/rides/driver/active
-// @access  Private (Driver)
+// Get driver's active ride
+// GET /api/rides/driver/active
 export const getDriverActiveRide = async (req, res, next) => {
   try {
     const ride = await Ride.findOne({
@@ -361,9 +346,8 @@ export const getDriverActiveRide = async (req, res, next) => {
   }
 };
 
-// @desc    Get all pending rides for drivers
-// @route   GET /api/rides/pending
-// @access  Private (Driver)
+// Get all pending rides for drivers
+// GET /api/rides/pending
 export const getPendingRides = async (req, res, next) => {
   try {
     const rides = await Ride.find({
@@ -387,11 +371,8 @@ export const getPendingRides = async (req, res, next) => {
   }
 };
 
-// Add these new controller functions at the end of rideController.js
-
-// @desc    Rate a driver after ride completion
-// @route   PUT /api/rides/:id/rate
-// @access  Private (Passenger)
+// Rate a driver after ride completion
+// PUT /api/rides/:id/rate
 export const rateDriver = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -438,7 +419,6 @@ export const rateDriver = async (req, res, next) => {
 
       driver.totalRatings += rating;
       driver.ratingCount += 1;
-      // Round to 1 decimal place
       driver.rating = Math.round((driver.totalRatings / driver.ratingCount) * 10) / 10;
       await driver.save();
       console.log(`Driver ${driver.name} new rating: ${driver.rating.toFixed(1)}`);
@@ -459,9 +439,8 @@ export const rateDriver = async (req, res, next) => {
   }
 };
 
-// @desc    Get driver's ride history
-// @route   GET /api/rides/driver/history
-// @access  Private (Driver)
+// Get driver's ride history
+// GET /api/rides/driver/history
 export const getDriverRideHistory = async (req, res, next) => {
   try {
     const rides = await Ride.find({

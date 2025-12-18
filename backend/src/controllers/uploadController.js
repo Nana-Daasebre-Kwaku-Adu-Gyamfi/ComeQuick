@@ -3,9 +3,10 @@ import logger from '../utils/logger.js';
 import Passenger from '../models/Passenger.js';
 import Driver from '../models/Driver.js';
 
-// @desc    Upload image to Cloudinary
-// @route   POST /api/upload
-// @access  Private
+// Upload image to Cloudinary
+// POST /api/upload
+// AI assisted code
+
 export const uploadImage = async (req, res, next) => {
   try {
     if (!req.file) {
@@ -42,9 +43,9 @@ export const uploadImage = async (req, res, next) => {
   }
 };
 
-// @desc    Upload image and update profile
-// @route   POST /api/upload/profile
-// @access  Private
+// Upload image and update profile
+// POST /api/upload/profile
+// AI assisted code
 export const uploadAndUpdateProfile = async (req, res, next) => {
   try {
     if (!req.file) {
@@ -99,9 +100,9 @@ export const uploadAndUpdateProfile = async (req, res, next) => {
   }
 };
 
-// @desc    Delete image from Cloudinary
-// @route   DELETE /api/upload/:publicId
-// @access  Private
+// Delete image from Cloudinary
+// DELETE /api/upload/:publicId
+// AI assisted code
 export const deleteImage = async (req, res, next) => {
   try {
     const { publicId } = req.params;

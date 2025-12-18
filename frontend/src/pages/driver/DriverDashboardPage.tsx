@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { RefreshCw, MapPin, Map, Navigation, User, Clock, CheckCircle2, Loader2 } from "lucide-react";
+import { RefreshCw, MapPin, Navigation, User, Clock, CheckCircle2, Loader2 } from "lucide-react";
 import { useDriverStore } from "@/store/driverStore";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,7 +41,6 @@ const DriverDashboardPage = () => {
   const [isAccepting, setIsAccepting] = useState<string | null>(null);
 
   const openMap = (lat: number, lng: number) => {
-    // Attempt to get high-accuracy current position to pass as origin
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -49,7 +48,7 @@ const DriverDashboardPage = () => {
           window.open(`https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${lat},${lng}&travelmode=driving`, '_blank');
         },
         () => {
-          // Fallback if geolocation fails - let Google use its default 'My Location'
+          // if geolocation fails - let Google use its default 'My Location'
           window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`, '_blank');
         },
         { enableHighAccuracy: true, timeout: 5000 }
@@ -75,7 +74,7 @@ const DriverDashboardPage = () => {
     const interval = setInterval(() => {
       loadRequests();
       checkActiveRide();
-    }, 5000); // Checking every 5 seconds
+    }, 5000); // Checking for ride request every 5 seconds
     return () => clearInterval(interval);
   }, [driver, navigate]);
 
@@ -91,7 +90,6 @@ const DriverDashboardPage = () => {
       if (response.ok) {
         const data = await response.json();
         const ride = data.ride;
-        // Update store with active ride
         setCurrentRide({
           id: ride._id,
           request: {
@@ -109,11 +107,6 @@ const DriverDashboardPage = () => {
           status: ride.status === 'matched' ? 'accepted' : ride.status as any,
         });
       } else if (response.status === 404) {
-        // No active ride (cancelled or completed)
-        // Only clear if we currently think we have a ride
-        // We need to access the LATEST currentRide, which might be stale in closure
-        // But setState inside hook usage is tricky if we depend on previous state.
-        // The safest way is to clear it if we receive a 404.
         const storedRide = useDriverStore.getState().currentRide;
         if (storedRide) {
           toast.info("Ride has ended or was cancelled");
@@ -127,7 +120,6 @@ const DriverDashboardPage = () => {
 
   const loadRequests = async () => {
     if (!driver) return;
-    // Don't show loading spinner on background polls for better UX
     // setIsLoading(true); 
     try {
       const response = await fetch('https://comequick.onrender.com/api/rides/pending', {
@@ -187,7 +179,7 @@ const DriverDashboardPage = () => {
       });
 
       toast.success("Ride accepted!");
-      loadRequests(); // Refresh the list
+      loadRequests(); 
     } catch (error) {
       console.error('Error accepting ride:', error);
       toast.error("Failed to accept ride");

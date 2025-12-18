@@ -1,10 +1,9 @@
 import logger from '../utils/logger.js';
 
-const errorHandler = (err, req, res, next) => {
+const errorHandler = (err, req, res) => {
   const statusCode = err.status || err.statusCode || 500;
   const message = err.message || 'Internal server error';
 
-  // Log error
   logger.error({
     message: err.message,
     stack: err.stack,

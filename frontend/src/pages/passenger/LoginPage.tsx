@@ -3,9 +3,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate, Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { Mail, Lock, Car, Loader2, Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { Mail, Lock, Loader2, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { apiService } from "@/services/apiService";
 import { useAuthStore } from "@/store/authStore";
 import { Button } from "@/components/ui/button";
@@ -67,7 +66,7 @@ const LoginPage = () => {
               <img src="/loader.png" alt="Logo" className="w-10 h-10 rounded-xl" />
               <span className="text-2xl font-bold text-foreground">ComeQuick</span>
             </Link>
-            <div className="w-10" /> {/* Spacer */}
+            <div className="w-10" />
           </div>
 
           <Card className="shadow-lg">

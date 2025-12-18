@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PageTransition } from "@/components/common/PageTransition";
 import { toast } from "sonner";
-import comequickLogo from "@/assets/comequick-logo.png";
+import { useRideStore } from "@/store/rideStore";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -33,20 +33,18 @@ const ProfilePage = () => {
     
     if (!file || !passenger || !token) return;
     
-    // Check file size (10MB limit)
+    // Increased file size from 5mb to 10mb
     if (file.size > 10 * 1024 * 1024) {
       toast.error("File is too large. Please use an image smaller than 10MB.");
       return;
     }
 
-    // Local preview
     const reader = new FileReader();
     reader.onloadend = () => {
       setProfileImage(reader.result as string);
     };
     reader.readAsDataURL(file);
 
-    // Upload to server
     const toastId = toast.loading("Uploading photo...");
     try {
       const formData = new FormData();
@@ -66,7 +64,6 @@ const ProfilePage = () => {
         throw new Error(data.message || 'Upload failed');
       }
 
-      // Update local passenger state
       updatePassenger({
         ...passenger,
         profileImageUrl: data.imageUrl,
@@ -117,7 +114,6 @@ const ProfilePage = () => {
 
   const handleLogout = () => {
     logout();
-    // Clear ride history and state on logout
     useRideStore.getState().reset();
     toast.success("Logged out successfully");
     navigate("/passenger/login");

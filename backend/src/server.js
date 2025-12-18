@@ -3,9 +3,6 @@ import app from './app.js';
 import connectDB from './config/database.js';
 import logger from './utils/logger.js';
 
-// Environment variables are now loaded automatically
-
-
 const PORT = process.env.PORT || 3000;
 
 // Connect to database

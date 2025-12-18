@@ -4,8 +4,8 @@ import logger from '../utils/logger.js';
 export const handleValidationErrors = (req, res, next) => {
   const errors = validationResult(req);
 
-  // Log what we're validating
-  console.log('=== VALIDATION CHECK ===');
+  // Let what we are validating show in the Log
+  console.log('VALIDATION CHECK');
   console.log('Request body:', JSON.stringify(req.body, null, 2));
   console.log('Has errors:', !errors.isEmpty());
 

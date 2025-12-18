@@ -15,7 +15,7 @@ const rideSchema = new mongoose.Schema(
     locationId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Location',
-      default: null, // Made optional for dynamic locations
+      default: null, 
     },
     pickupLocation: {
       type: String,
@@ -92,7 +92,7 @@ const rideSchema = new mongoose.Schema(
   }
 );
 
-// Index for efficient queries
+// Index added for efficient queries
 rideSchema.index({ passengerId: 1, status: 1 });
 rideSchema.index({ driverId: 1, status: 1 });
 rideSchema.index({ status: 1 });

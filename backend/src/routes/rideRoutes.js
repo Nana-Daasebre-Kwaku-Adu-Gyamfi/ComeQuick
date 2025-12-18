@@ -18,8 +18,6 @@ import { handleValidationErrors } from '../middleware/validation.js';
 
 const router = Router();
 
-// Validation rules for ride requests (locationId is optional, handled by controller)
-
 // Passenger routes - UPDATED VALIDATION (no locationId required)
 const rideRequestValidationRules = [
   body('pickupLocation').trim().notEmpty().withMessage('Pickup location is required'),
@@ -42,7 +40,7 @@ const completeRideValidation = [
   body('fare').optional().isNumeric().withMessage('Fare must be a number'),
 ];
 
-router.get('/pending', getPendingRides); // Public - no auth required
+router.get('/pending', getPendingRides); 
 router.put('/:id/accept', protectDriver, acceptRide);
 router.put('/:id/start', protectDriver, startRide);
 router.put('/:id/complete', protectDriver, completeRideValidation, handleValidationErrors, completeRide);

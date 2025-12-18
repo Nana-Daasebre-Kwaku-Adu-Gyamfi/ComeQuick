@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, User, MapPin, Navigation, Clock, Loader2 } from "lucide-react";
+import { X, User, MapPin, Navigation, Clock, CheckCircle2} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useDriverStore } from "@/store/driverStore";
@@ -115,7 +115,7 @@ const DriverMapPage = () => {
     markersRef.current = [];
 
     pendingRides.forEach((ride) => {
-      if (!ride.passengerId) return; // Skip rides with missing passenger data
+      if (!ride.passengerId) return; 
       
       const isSelected = selectedRide?._id === ride._id;
       const markerHtml = `
@@ -284,8 +284,5 @@ const DriverMapPage = () => {
     </div>
   );
 };
-
-// Add CheckCircle2 import to match the Hero button
-import { CheckCircle2 } from "lucide-react";
 
 export default DriverMapPage;

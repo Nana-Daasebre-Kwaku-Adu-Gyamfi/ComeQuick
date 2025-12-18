@@ -81,7 +81,6 @@ export const protectDriver = async (req, res, next) => {
 };
 
 // Middleware to authenticate either passenger or driver
-// Middleware to authenticate either passenger or driver
 export const protectUser = async (req, res, next) => {
   try {
     let token;

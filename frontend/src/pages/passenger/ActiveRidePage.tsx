@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
-import { Car, Phone, MapPin, Navigation, Clock, ArrowLeft, Loader2, CheckCircle2, Star, X } from "lucide-react";
+import { Phone, Navigation, Clock, ArrowLeft, Loader2, CheckCircle2, Star, X } from "lucide-react";
 import { rideService } from "@/services/rideService";
 import { useRideStore } from "@/store/rideStore";
 import { Button } from "@/components/ui/button";
@@ -34,10 +34,9 @@ const ActiveRidePage = () => {
       try {
         const ride = await rideService.getActiveRide();
         if (ride) {
-          console.log('Polled ride:', ride); // Debug log
+          console.log('Polled ride:', ride);
           setActiveRide(ride);
           
-          // Check if driver has been assigned (status changed from pending to matched)
           if (ride.status === 'matched' || ride.status === 'in_progress') {
             setIsWaiting(false);
             if (isWaiting) {
@@ -68,8 +67,7 @@ const ActiveRidePage = () => {
       clearRide();
       navigate("/passenger/dashboard");
     } catch (error) {
-      // If the ride is not found, it means it's already gone/cancelled
-      // So we should just clear the state and move on
+
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
       
       if (errorMessage.includes("Ride not found") || errorMessage.includes("404")) {

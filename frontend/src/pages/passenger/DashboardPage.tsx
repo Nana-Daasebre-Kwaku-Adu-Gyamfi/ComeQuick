@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Car, MapPin, Clock, ArrowRight, User, Navigation } from "lucide-react";
+import { Car, Clock, ArrowRight, User, Navigation } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { useRideStore } from "@/store/rideStore";
 import { Button } from "@/components/ui/button";

@@ -63,7 +63,6 @@ const DriverRegisterPage = () => {
         throw new Error(result.message || 'Registration failed');
       }
 
-      // Add token to driver object as sessionToken
       const driverWithToken = {
         ...result.driver,
         sessionToken: result.token,
