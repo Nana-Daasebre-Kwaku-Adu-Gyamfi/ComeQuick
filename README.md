@@ -4,7 +4,7 @@
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 To demonstrate this application, you will essentially play two roles: the **Passenger** (requesting a ride) and the **Driver** (giving the ride).
 
@@ -21,7 +21,7 @@ We recommend opening the app in **two different browser windows** (or one normal
 
 ---
 
-## 📱 Demo Steps
+## Demo Steps
 
 ### Step 1: Passenger Setup (Window 1)
 1.  Click **"Request a Ride"** or **"Passenger Login"**.
@@ -58,7 +58,7 @@ We recommend opening the app in **two different browser windows** (or one normal
 
 ---
 
-## 🔧 Behind the Scenes (How it Works)
+## Behind the Scenes (How it Works)
 
 For those interested in the technology:
 
@@ -67,4 +67,4 @@ For those interested in the technology:
 *   **Smart Navigation**: Driver navigation is powered by **Google Maps Directions API**, ensuring routes are based on live traffic and current driver position.
 *   **Image Storage**: We use **Cloudinary** for secure, lightning-fast profile photo hosting.
 
-Enjoy your ride with **ComeQuick**! 🚗💨
+Enjoy your ride with **ComeQuick**! 
