@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { RefreshCw, MapPin, Navigation, User, Clock, CheckCircle2, Loader2 } from "lucide-react";
+import { RefreshCw, MapPin, Map, Navigation, User, Clock, CheckCircle2, Loader2 } from "lucide-react";
 import { useDriverStore } from "@/store/driverStore";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -39,6 +39,10 @@ const DriverDashboardPage = () => {
   const [requests, setRequests] = useState<PendingRide[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isAccepting, setIsAccepting] = useState<string | null>(null);
+
+  const openMap = (lat: number, lng: number) => {
+    window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank');
+  };
 
   const handleLogout = () => {
     logout();
@@ -81,6 +85,7 @@ const DriverDashboardPage = () => {
             passengerName: ride.passengerId.name,
             passengerProfileImageUrl: ride.passengerId.profileImageUrl,
             pickupLocation: ride.pickupLocation,
+            pickupCoordinates: ride.pickupCoordinates,
             destination: ride.destination,
             requestedTime: new Date(ride.requestedTime),
             createdAt: new Date(ride.createdAt),
@@ -93,7 +98,6 @@ const DriverDashboardPage = () => {
         // Only clear if we currently think we have a ride
         // We need to access the LATEST currentRide, which might be stale in closure
         // But setState inside hook usage is tricky if we depend on previous state.
-        // However, we can use the state directly if we trust the closure or refs.
         // The safest way is to clear it if we receive a 404.
         const storedRide = useDriverStore.getState().currentRide;
         if (storedRide) {
@@ -157,6 +161,7 @@ const DriverDashboardPage = () => {
           passengerName: request.passengerId.name,
           passengerProfileImageUrl: request.passengerId.profileImageUrl,
           pickupLocation: request.pickupLocation,
+          pickupCoordinates: request.pickupCoordinates,
           destination: request.destination,
           requestedTime: new Date(request.requestedTime),
           createdAt: new Date(request.createdAt),
@@ -257,9 +262,20 @@ const DriverDashboardPage = () => {
                       <p className="text-sm text-muted-foreground">{currentRide.request.pickupLocation} → {currentRide.request.destination}</p>
                     </div>
                   </div>
-                  <Button onClick={handleComplete} variant="default" className="w-full bg-success hover:bg-success/90">
-                    <CheckCircle2 className="w-4 h-4" /> Complete Ride
-                  </Button>
+                  <div className="flex gap-3">
+                    {currentRide.request.pickupCoordinates && (
+                      <Button 
+                        onClick={() => openMap(currentRide.request.pickupCoordinates!.lat, currentRide.request.pickupCoordinates!.lng)}
+                        variant="outline" 
+                        className="flex-1"
+                      >
+                        <Map className="w-4 h-4" /> View Map
+                      </Button>
+                    )}
+                    <Button onClick={handleComplete} variant="default" className="flex-1 bg-success hover:bg-success/90">
+                      <CheckCircle2 className="w-4 h-4" /> Complete Ride
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </motion.div>
@@ -321,21 +337,30 @@ const DriverDashboardPage = () => {
                           <Navigation className="w-4 h-4 text-green-600" /> {req.destination}
                         </p>
                       </div>
-                      <Button
-                        onClick={() => handleAccept(req)}
-                        disabled={!!currentRide || isAccepting === req._id}
-                        className="w-full"
-                        variant="hero"
-                      >
-                        {isAccepting === req._id ? (
-                          <>
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                            Accepting...
-                          </>
-                        ) : (
-                          "Accept Ride"
-                        )}
-                      </Button>
+                      <div className="flex gap-3">
+                        <Button
+                          onClick={() => openMap(req.pickupCoordinates.lat, req.pickupCoordinates.lng)}
+                          className="flex-1"
+                          variant="outline"
+                        >
+                          <Map className="w-4 h-4" /> View Map
+                        </Button>
+                        <Button
+                          onClick={() => handleAccept(req)}
+                          disabled={!!currentRide || isAccepting === req._id}
+                          className="flex-1"
+                          variant="hero"
+                        >
+                          {isAccepting === req._id ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                              Accepting...
+                            </>
+                          ) : (
+                            "Accept Ride"
+                          )}
+                        </Button>
+                      </div>
                     </motion.div>
                   ))}
                 </div>

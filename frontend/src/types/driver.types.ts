@@ -30,6 +30,10 @@ export interface PassengerRequest {
   passengerName: string;
   passengerProfileImageUrl?: string;
   pickupLocation: string;
+  pickupCoordinates?: {
+    lat: number;
+    lng: number;
+  };
   destination: string;
   requestedTime: Date;
   createdAt: Date;
