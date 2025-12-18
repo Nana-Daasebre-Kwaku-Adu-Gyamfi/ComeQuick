@@ -2,9 +2,9 @@ import Driver from '../models/Driver.js';
 import { generateToken } from '../utils/generateToken.js';
 import logger from '../utils/logger.js';
 
-// @desc    Register a new driver
-// @route   POST /api/drivers/register
-// @access  Public
+// Register a new driver
+// POST /api/drivers/register
+// Public
 export const registerDriver = async (req, res, next) => {
   try {
     const { name, phone, carModel, carColor, licensePlate, password } = req.body;
@@ -57,9 +57,9 @@ export const registerDriver = async (req, res, next) => {
   }
 };
 
-// @desc    Login driver
-// @route   POST /api/drivers/login
-// @access  Public
+// Login driver
+// POST /api/drivers/login
+// Public
 export const loginDriver = async (req, res, next) => {
   try {
     const { phone, password } = req.body;
@@ -101,9 +101,8 @@ export const loginDriver = async (req, res, next) => {
   }
 };
 
-// @desc    Verify driver
-// @route   POST /api/drivers/verify
-// @access  Private
+// Verify driver
+// POST /api/drivers/verify
 export const verifyDriver = async (req, res, next) => {
   try {
     const driver = await Driver.findById(req.driver._id);
@@ -134,9 +133,8 @@ export const verifyDriver = async (req, res, next) => {
   }
 };
 
-// @desc    Get driver profile
-// @route   GET /api/drivers/profile
-// @access  Private
+// Get driver profile
+// GET /api/drivers/profile
 export const getProfile = async (req, res, next) => {
   try {
     const driver = await Driver.findById(req.driver._id);
@@ -147,9 +145,8 @@ export const getProfile = async (req, res, next) => {
   }
 };
 
-// @desc    Update driver profile
-// @route   PUT /api/drivers/profile
-// @access  Private
+// Update driver profile
+// PUT /api/drivers/profile
 export const updateProfile = async (req, res, next) => {
   try {
     const { name, carModel, carColor, profileImageUrl } = req.body;
@@ -174,9 +171,8 @@ export const updateProfile = async (req, res, next) => {
   }
 };
 
-// @desc    Update driver availability
-// @route   PUT /api/drivers/availability
-// @access  Private
+// Update driver availability
+// PUT /api/drivers/availability
 export const updateAvailability = async (req, res, next) => {
   try {
     const { isAvailable, locationId, locationName } = req.body;
@@ -207,9 +203,8 @@ export const updateAvailability = async (req, res, next) => {
   }
 };
 
-// @desc    Get pending ride requests
-// @route   GET /api/drivers/requests
-// @access  Private
+// Get pending ride requests
+// GET /api/drivers/requests
 export const getPendingRequests = async (req, res, next) => {
   try {
     const Ride = (await import('../models/Ride.js')).default;

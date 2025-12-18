@@ -25,10 +25,6 @@ const seedAdmin = async () => {
         if (adminExists) {
             console.log('Admin user already exists');
 
-            // Optional: Update password if it exists
-            // adminExists.password = password;
-            // await adminExists.save();
-            // console.log('Admin password updated');
         } else {
             const admin = await Admin.create({
                 name,

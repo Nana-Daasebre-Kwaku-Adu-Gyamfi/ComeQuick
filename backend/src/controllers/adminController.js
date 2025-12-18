@@ -2,9 +2,9 @@ import Passenger from '../models/Passenger.js';
 import Driver from '../models/Driver.js';
 import logger from '../utils/logger.js';
 
-// @desc    Get all passengers
-// @route   GET /api/admin/passengers
-// @access  Private/Admin
+// Get all passengers
+// GET /api/admin/passengers
+// Private/Admin
 export const getPassengers = async (req, res, next) => {
     try {
         const passengers = await Passenger.find().select('-password');
@@ -15,9 +15,9 @@ export const getPassengers = async (req, res, next) => {
     }
 };
 
-// @desc    Get all drivers
-// @route   GET /api/admin/drivers
-// @access  Private/Admin
+// Get all drivers
+// GET /api/admin/drivers
+// Private/Admin
 export const getDrivers = async (req, res, next) => {
     try {
         const drivers = await Driver.find().select('-password');
@@ -28,9 +28,9 @@ export const getDrivers = async (req, res, next) => {
     }
 };
 
-// @desc    Toggle passenger suspension
-// @route   PUT /api/admin/passengers/:id/suspend
-// @access  Private/Admin
+// Toggle passenger suspension
+// PUT /api/admin/passengers/:id/suspend
+// Private/Admin
 export const togglePassengerSuspension = async (req, res, next) => {
     try {
         const passenger = await Passenger.findById(req.params.id);
@@ -52,9 +52,9 @@ export const togglePassengerSuspension = async (req, res, next) => {
     }
 };
 
-// @desc    Delete passenger
-// @route   DELETE /api/admin/passengers/:id
-// @access  Private/Admin
+// Delete passenger
+// DELETE /api/admin/passengers/:id
+// Private/Admin
 export const deletePassenger = async (req, res, next) => {
     try {
         const passenger = await Passenger.findByIdAndDelete(req.params.id);
@@ -70,9 +70,9 @@ export const deletePassenger = async (req, res, next) => {
     }
 };
 
-// @desc    Verify driver
-// @route   PUT /api/admin/drivers/:id/verify
-// @access  Private/Admin
+// Verify driver
+// PUT /api/admin/drivers/:id/verify
+// Private/Admin
 export const verifyDriver = async (req, res, next) => {
     try {
         const driver = await Driver.findById(req.params.id);
@@ -94,9 +94,9 @@ export const verifyDriver = async (req, res, next) => {
     }
 };
 
-// @desc    Delete driver
-// @route   DELETE /api/admin/drivers/:id
-// @access  Private/Admin
+// Delete driver
+// DELETE /api/admin/drivers/:id
+// Private/Admin
 export const deleteDriver = async (req, res, next) => {
     try {
         const driver = await Driver.findByIdAndDelete(req.params.id);

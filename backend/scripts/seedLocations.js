@@ -11,6 +11,7 @@ const seedLocations = async () => {
     
     console.log('Seeding locations...');
     
+    //hardcoded locations to test the application
     const locations = [
       {
         name: 'Downtown',
@@ -44,32 +45,23 @@ const seedLocations = async () => {
         },
         address: 'Central Shopping Mall',
       },
-      {
-        name: 'Train Station',
-        coordinates: {
-          lat: 40.7527,
-          lng: -73.9772,
-        },
-        address: 'Main Train Station',
-      },
     ];
     
     // Clear existing locations (optional)
     await Location.deleteMany({});
     console.log('Cleared existing locations...');
     
-    // Insert locations
     const createdLocations = await Location.insertMany(locations);
-    console.log(`✅ Created ${createdLocations.length} locations:`);
+    console.log(` Created ${createdLocations.length} locations:`);
     
     createdLocations.forEach(loc => {
       console.log(`   - ${loc.name} (ID: ${loc._id})`);
     });
     
-    console.log('\n✨ Locations seeded successfully!');
+    console.log('\n Locations seeded successfully!');
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error seeding locations:', error.message);
+    console.error(' Error seeding locations:', error.message);
     process.exit(1);
   }
 };

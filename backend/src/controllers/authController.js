@@ -3,26 +3,25 @@ import Admin from '../models/Admin.js';
 import { generateToken } from '../utils/generateToken.js';
 import logger from '../utils/logger.js';
 
-// @desc    Register a new passenger
-// @route   POST /api/auth/signup
-// @access  Public
+// Register a new passenger
+// POST /api/auth/signup
+// Public
 export const signup = async (req, res, next) => {
   try {
     const { name, email, phone, password } = req.body;
 
-    // Check if passenger already exists
+    // Checking if passenger already exists
     const existingPassenger = await Passenger.findOne({ email });
     if (existingPassenger) {
       return res.status(400).json({ message: 'Passenger already exists with this email' });
     }
 
-    // Create passenger (verified by default)
     const passenger = await Passenger.create({
       name,
       email,
       phone,
       password,
-      isVerified: true, // Auto-verified, no OTP needed
+      isVerified: true, 
     });
 
     logger.info(`New passenger registered: ${email}`);
@@ -55,23 +54,17 @@ export const signup = async (req, res, next) => {
   }
 };
 
-// @desc    Login passenger
-// @route   POST /api/auth/login
-// @access  Public
+// Login passenger
+// POST /api/auth/login
+// Public
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-
-    // Convert email to lowercase to match database storage
     const normalizedEmail = email?.toLowerCase().trim();
-
-    // Check if passenger exists and get password
     const passenger = await Passenger.findOne({ email: normalizedEmail }).select('+password');
     if (!passenger) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
-
-    // Check password
     const isMatch = await passenger.matchPassword(password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid email or password' });
@@ -100,9 +93,9 @@ export const login = async (req, res, next) => {
   }
 };
 
-// @desc    Get current passenger
-// @route   GET /api/auth/me
-// @access  Private
+// Get current passenger
+// GET /api/auth/me
+// Private
 export const getMe = async (req, res, next) => {
   try {
     const passenger = await Passenger.findById(req.passenger._id);
@@ -114,22 +107,21 @@ export const getMe = async (req, res, next) => {
   }
 };
 
-// @desc    Login admin
-// @route   POST /api/auth/admin/login
-// @access  Public
+// Login admin
+// POST /api/auth/admin/login
+// Public
 export const adminLogin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const normalizedEmail = email?.toLowerCase().trim();
 
-    // Check if admin exists
+    // Checking if admin exists
     const admin = await Admin.findOne({ email: normalizedEmail });
 
     if (!admin) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    // Check password
     const isMatch = await admin.matchPassword(password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid email or password' });

@@ -14,7 +14,6 @@ const clearDummyData = async () => {
     
     console.log('\nClearing dummy/test data...\n');
     
-    // Clear all collections
     const passengerCount = await Passenger.countDocuments();
     const driverCount = await Driver.countDocuments();
     const rideCount = await Ride.countDocuments();
@@ -26,19 +25,18 @@ const clearDummyData = async () => {
     console.log(`  - ${rideCount} rides`);
     console.log(`  - ${locationCount} locations`);
     
-    // Delete all documents
     await Passenger.deleteMany({});
     await Driver.deleteMany({});
     await Ride.deleteMany({});
     await Location.deleteMany({});
     
-    console.log('\n✅ All dummy data cleared!');
-    console.log('\n📊 Collections are now empty and ready for real data.');
+    console.log('\n All dummy data cleared!');
+    console.log('\n Collections are now empty and ready for real data.');
     console.log('   When you create users through the API, they will appear in the database.\n');
     
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error:', error.message);
+    console.error(' Error:', error.message);
     process.exit(1);
   }
 };
