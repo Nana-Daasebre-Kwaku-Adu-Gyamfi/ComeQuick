@@ -41,7 +41,22 @@ const DriverDashboardPage = () => {
   const [isAccepting, setIsAccepting] = useState<string | null>(null);
 
   const openMap = (lat: number, lng: number) => {
-    window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank');
+    // Attempt to get high-accuracy current position to pass as origin
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const origin = `${position.coords.latitude},${position.coords.longitude}`;
+          window.open(`https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${lat},${lng}&travelmode=driving`, '_blank');
+        },
+        () => {
+          // Fallback if geolocation fails - let Google use its default 'My Location'
+          window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`, '_blank');
+        },
+        { enableHighAccuracy: true, timeout: 5000 }
+      );
+    } else {
+      window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`, '_blank');
+    }
   };
 
   const handleLogout = () => {
@@ -60,7 +75,7 @@ const DriverDashboardPage = () => {
     const interval = setInterval(() => {
       loadRequests();
       checkActiveRide();
-    }, 5000); // Check every 5 seconds
+    }, 5000); // Checking every 5 seconds
     return () => clearInterval(interval);
   }, [driver, navigate]);
 
@@ -123,7 +138,8 @@ const DriverDashboardPage = () => {
 
       if (response.ok) {
         const data = await response.json();
-        setRequests(data.rides || []);
+        const rides = (data.rides || []).filter((r: any) => r.passengerId);
+        setRequests(rides);
       } else {
         console.error('Failed to load requests');
       }
@@ -262,18 +278,17 @@ const DriverDashboardPage = () => {
                       <p className="text-sm text-muted-foreground">{currentRide.request.pickupLocation} → {currentRide.request.destination}</p>
                     </div>
                   </div>
-                  <div className="flex gap-3">
-                    {currentRide.request.pickupCoordinates && (
-                      <Button 
-                        onClick={() => openMap(currentRide.request.pickupCoordinates!.lat, currentRide.request.pickupCoordinates!.lng)}
-                        variant="outline" 
-                        className="flex-1"
-                      >
-                        <Map className="w-4 h-4" /> View Map
-                      </Button>
-                    )}
+                   <div className="flex flex-col sm:flex-row gap-3">
+                    <Button 
+                      onClick={() => openMap(currentRide.request.pickupCoordinates!.lat, currentRide.request.pickupCoordinates!.lng)}
+                      variant="outline" 
+                      size="sm"
+                      className="flex-1"
+                    >
+                      <Navigation className="w-4 h-4 mr-2" /> Navigate to Pickup
+                    </Button>
                     <Button onClick={handleComplete} variant="default" className="flex-1 bg-success hover:bg-success/90">
-                      <CheckCircle2 className="w-4 h-4" /> Complete Ride
+                      <CheckCircle2 className="w-4 h-4 mr-2" /> Complete Ride
                     </Button>
                   </div>
                 </CardContent>
@@ -343,7 +358,7 @@ const DriverDashboardPage = () => {
                           className="flex-1"
                           variant="outline"
                         >
-                          <Map className="w-4 h-4" /> View Map
+                          <Navigation className="w-4 h-4 mr-2" /> View Map
                         </Button>
                         <Button
                           onClick={() => handleAccept(req)}

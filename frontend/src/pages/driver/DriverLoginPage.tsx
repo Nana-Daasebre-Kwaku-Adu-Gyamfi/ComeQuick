@@ -5,22 +5,25 @@ import { z } from "zod";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { Car, Phone, Lock, Loader2, ArrowLeft } from "lucide-react";
+import { Car, Phone, Lock, Loader2, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent} from "@/components/ui/card";
 import { PageTransition } from "@/components/common/PageTransition";
 import { useDriverStore } from "@/store/driverStore";
 
 const loginSchema = z.object({
-  phone: z.string().min(10, "Phone number is required"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  phone: z.string().regex(/^\+233\d{9}$/, "Phone number must start with +233 followed by 9 digits"),
+  password: z.string()
+    .min(6, "Password must be at least 6 characters")
+    .regex(/^(?=.*[a-zA-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{6,}$/, "Password must contain at least one letter and one special character"),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
 const DriverLoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const setDriver = useDriverStore((state) => state.setDriver);
 
@@ -49,7 +52,7 @@ const DriverLoginPage = () => {
         throw new Error(result.message || 'Login failed');
       }
 
-      // Add token to driver object as sessionToken
+      // Adding token to driver object as sessionToken
       const driverWithToken = {
         ...result.driver,
         sessionToken: result.token,
@@ -70,13 +73,10 @@ const DriverLoginPage = () => {
       {/* Header */}
       <header className="bg-card border-b border-border sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+          <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 gradient-hero rounded-lg flex items-center justify-center">
-              <Car className="w-5 h-5 text-primary-foreground" />
-            </div>
             <span className="text-lg font-bold text-foreground">Driver Login</span>
           </div>
         </div>
@@ -120,12 +120,22 @@ const DriverLoginPage = () => {
                       <Lock className="w-4 h-4 text-muted-foreground" />
                       Password
                     </label>
-                    <Input
-                      {...register("password")}
-                      type="password"
-                      placeholder="••••••••"
-                      disabled={isLoading}
-                    />
+                    <div className="relative">
+                      <Input
+                        {...register("password")}
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        disabled={isLoading}
+                        className="pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
                     {errors.password && (
                       <p className="text-destructive text-sm">{errors.password.message}</p>
                     )}
@@ -145,7 +155,6 @@ const DriverLoginPage = () => {
                       </>
                     ) : (
                       <>
-                        <Car className="w-5 h-5" />
                         Login
                       </>
                     )}

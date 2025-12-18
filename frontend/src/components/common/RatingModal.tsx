@@ -125,11 +125,11 @@ export const RatingModal = ({ isOpen, onClose, rideId, driverName, onRatingSubmi
                       animate={{ opacity: 1, y: 0 }}
                       className="text-center text-lg font-semibold text-foreground mb-6"
                     >
-                      {rating === 5 && "Excellent! 🌟"}
-                      {rating === 4 && "Great! 👍"}
-                      {rating === 3 && "Good 👌"}
-                      {rating === 2 && "Fair 😐"}
-                      {rating === 1 && "Poor 😞"}
+                      {rating === 5 && "Excellent"}
+                      {rating === 4 && "Great"}
+                      {rating === 3 && "Good"}
+                      {rating === 2 && "Okay"}
+                      {rating === 1 && "Poor"}
                     </motion.p>
                   )}
 

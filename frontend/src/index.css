@@ -64,7 +64,7 @@
   }
 
   .dark {
-    --background: 222 47% 6%;
+    --background: 222 15% 12%;
     --foreground: 210 40% 98%;
 
     --card: 222 47% 8%;
@@ -101,6 +101,9 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Dark Mode Gradients */
+    --gradient-surface: linear-gradient(180deg, hsl(222, 15%, 12%) 0%, hsl(222, 15%, 8%) 100%);
   }
 }
 
@@ -152,9 +155,12 @@
   }
 
   @keyframes pulse-soft {
-    0%, 100% {
+
+    0%,
+    100% {
       opacity: 1;
     }
+
     50% {
       opacity: 0.7;
     }
@@ -165,9 +171,12 @@
   }
 
   @keyframes bounce-soft {
-    0%, 100% {
+
+    0%,
+    100% {
       transform: translateY(-5%);
     }
+
     50% {
       transform: translateY(0);
     }

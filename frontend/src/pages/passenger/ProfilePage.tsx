@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Camera, Mail, Phone, User, Settings, ChevronRight } from "lucide-react";
+import { ArrowLeft, Camera, Mail, Phone, User, Settings, ChevronRight, LogOut, Sun, Moon } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,6 +16,11 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const passenger = useAuthStore((state) => state.passenger);
   const updatePassenger = useAuthStore((state) => state.updatePassenger);
+  const logout = useAuthStore((state) => state.logout);
+  
+  const [isDarkMode, setIsDarkMode] = useState(() => 
+    document.documentElement.classList.contains("dark")
+  );
   
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(passenger?.name || "");
@@ -98,6 +103,26 @@ const ProfilePage = () => {
       .slice(0, 2);
   };
 
+  const toggleDarkMode = () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    if (newMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+    // Clear ride history and state on logout
+    useRideStore.getState().reset();
+    toast.success("Logged out successfully");
+    navigate("/passenger/login");
+  };
+
   return (
     <div className="min-h-screen gradient-surface">
       <header className="bg-card border-b border-border sticky top-0 z-50">
@@ -106,13 +131,8 @@ const ProfilePage = () => {
             <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
               <ArrowLeft className="w-5 h-5" />
             </Button>
-            <h1 className="text-lg font-semibold text-foreground">Your Account</h1>
+            <h1 className="text-lg font-semibold text-foreground">Your Profile</h1>
           </div>
-          <Link to="/passenger/settings">
-            <Button variant="ghost" size="icon">
-              <Settings className="w-5 h-5" />
-            </Button>
-          </Link>
         </div>
       </header>
 
@@ -212,17 +232,33 @@ const ProfilePage = () => {
               </CardContent>
             </Card>
 
-            <Link to="/passenger/settings">
-              <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
-                <CardContent className="py-4 flex items-center gap-4">
-                  <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
-                    <Settings className="w-5 h-5 text-muted-foreground" />
-                  </div>
-                  <span className="flex-1 text-foreground">Account Settings</span>
-                  <ChevronRight className="w-5 h-5 text-muted-foreground" />
-                </CardContent>
-              </Card>
-            </Link>
+            <Card 
+              className="hover:bg-muted/50 transition-colors cursor-pointer"
+              onClick={toggleDarkMode}
+            >
+              <CardContent className="py-4 flex items-center gap-4">
+                <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
+                  {isDarkMode ? <Sun className="w-5 h-5 text-warning" /> : <Moon className="w-5 h-5 text-primary" />}
+                </div>
+                <span className="flex-1 text-foreground">{isDarkMode ? "Light Mode" : "Dark Mode"}</span>
+                <div className={`w-10 h-5 rounded-full relative transition-colors ${isDarkMode ? "bg-primary" : "bg-muted"}`}>
+                  <div className={`absolute top-1 w-3 h-3 rounded-full bg-white transition-all ${isDarkMode ? "right-1" : "left-1"}`} />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card 
+              className="hover:bg-destructive/10 transition-colors cursor-pointer border-destructive/20"
+              onClick={handleLogout}
+            >
+              <CardContent className="py-4 flex items-center gap-4">
+                <div className="w-10 h-10 bg-destructive/10 rounded-full flex items-center justify-center">
+                  <LogOut className="w-5 h-5 text-destructive" />
+                </div>
+                <span className="flex-1 text-destructive font-medium">Log Out</span>
+                <ChevronRight className="w-5 h-5 text-destructive/50" />
+              </CardContent>
+            </Card>
           </motion.div>
         </PageTransition>
       </main>

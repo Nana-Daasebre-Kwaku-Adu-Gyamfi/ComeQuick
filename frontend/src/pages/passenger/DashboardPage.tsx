@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Car, MapPin, Clock, ArrowRight, User, Navigation } from "lucide-react";
@@ -9,6 +10,7 @@ import { PageTransition } from "@/components/common/PageTransition";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { format } from "date-fns";
 import comequickLogo from "@/assets/comequick-logo.png";
+import { rideService } from "@/services/rideService";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
@@ -19,6 +21,21 @@ const DashboardPage = () => {
   const getInitials = (name: string) => {
     return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
   };
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const history = await rideService.getRideHistory();
+        if (history) {
+          useRideStore.setState({ rideHistory: history });
+        }
+      } catch (error) {
+        console.error("Failed to fetch history:", error);
+      }
+    };
+
+    fetchHistory();
+  }, [passenger]);
 
   return (
     <div className="min-h-screen gradient-surface">
@@ -52,7 +69,7 @@ const DashboardPage = () => {
             className="mb-8"
           >
             <h1 className="text-3xl font-bold text-foreground mb-2">
-              Hello, {passenger?.name?.split(" ")[0]}! 👋
+              Hello, {passenger?.name?.split(" ")[0]}!
             </h1>
             <p className="text-muted-foreground">Where would you like to go today?</p>
           </motion.div>
@@ -90,7 +107,7 @@ const DashboardPage = () => {
             transition={{ delay: 0.1 }}
             className="mb-8"
           >
-            <Link to="/passenger/request-ride">
+            <Link to={currentRequest ? "/passenger/active-ride" : "/passenger/request-ride"}>
               <Card className="hover-lift cursor-pointer group">
                 <CardContent className="p-8">
                   <div className="flex items-center justify-between">

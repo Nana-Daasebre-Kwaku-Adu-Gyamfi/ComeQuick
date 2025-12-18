@@ -5,7 +5,7 @@ import { z } from "zod";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { Mail, Lock, Car, Loader2 } from "lucide-react";
+import { Mail, Lock, Car, Loader2, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { apiService } from "@/services/apiService";
 import { useAuthStore } from "@/store/authStore";
 import { Button } from "@/components/ui/button";
@@ -15,13 +15,16 @@ import { PageTransition } from "@/components/common/PageTransition";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string()
+    .min(6, "Password must be at least 6 characters")
+    .regex(/^(?=.*[a-zA-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{6,}$/, "Password must contain at least one letter and one special character"),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
 const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const setAuth = useAuthStore((state) => state.setAuth);
 
@@ -51,11 +54,21 @@ const LoginPage = () => {
     <div className="min-h-screen gradient-surface flex items-center justify-center p-4">
       <PageTransition>
         <div className="w-full max-w-md">
-          {/* Logo */}
-          <Link to="/" className="flex items-center justify-center gap-2 mb-8">
-            <img src="/loader.png" alt="Logo" className="w-12 h-12 rounded-xl" />
-            <span className="text-2xl font-bold text-foreground">ComeQuick</span>
-          </Link>
+          <div className="flex items-center justify-between mb-8">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => navigate("/")}
+              className="hover:bg-primary/10 transition-colors"
+            >
+              <ArrowLeft className="w-6 h-6" />
+            </Button>
+            <Link to="/" className="flex items-center gap-2">
+              <img src="/loader.png" alt="Logo" className="w-10 h-10 rounded-xl" />
+              <span className="text-2xl font-bold text-foreground">ComeQuick</span>
+            </Link>
+            <div className="w-10" /> {/* Spacer */}
+          </div>
 
           <Card className="shadow-lg">
             <CardHeader className="text-center">
@@ -85,12 +98,22 @@ const LoginPage = () => {
                     <Lock className="w-4 h-4 text-muted-foreground" />
                     Password
                   </label>
-                  <Input
-                    {...register("password")}
-                    type="password"
-                    placeholder="••••••••"
-                    disabled={isLoading}
-                  />
+                  <div className="relative">
+                    <Input
+                      {...register("password")}
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      disabled={isLoading}
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                   {errors.password && (
                     <p className="text-destructive text-sm">{errors.password.message}</p>
                   )}

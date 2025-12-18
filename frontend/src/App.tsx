@@ -18,7 +18,6 @@ import DashboardPage from "./pages/passenger/DashboardPage";
 import RequestRidePage from "./pages/passenger/RequestRidePage";
 import ActiveRidePage from "./pages/passenger/ActiveRidePage";
 import ProfilePage from "./pages/passenger/ProfilePage";
-import SettingsPage from "./pages/passenger/SettingsPage";
 
 // Driver Pages
 import WelcomePage from "./pages/driver/WelcomePage";
@@ -27,7 +26,6 @@ import DriverRegisterPage from "./pages/driver/DriverRegisterPage";
 import DriverDashboardPage from "./pages/driver/DriverDashboardPage";
 import DriverMapPage from "./pages/driver/DriverMapPage";
 import DriverProfilePage from "./pages/driver/DriverProfilePage";
-import DriverSettingsPage from "./pages/driver/DriverSettingsPage";
 
 // Admin Pages
 import AdminLoginPage from "./pages/admin/AdminLoginPage";
@@ -77,7 +75,6 @@ const App = () => (
           <Route path="/passenger/request-ride" element={<PassengerRoute><RequestRidePage /></PassengerRoute>} />
           <Route path="/passenger/active-ride" element={<PassengerRoute><ActiveRidePage /></PassengerRoute>} />
           <Route path="/passenger/profile" element={<PassengerRoute><ProfilePage /></PassengerRoute>} />
-          <Route path="/passenger/settings" element={<PassengerRoute><SettingsPage /></PassengerRoute>} />
 
           {/* Driver Routes */}
           <Route path="/driver" element={<WelcomePage />} />
@@ -86,7 +83,6 @@ const App = () => (
           <Route path="/driver/register" element={<DriverRegisterPage />} />
           <Route path="/driver/dashboard" element={<DriverRoute><DriverDashboardPage /></DriverRoute>} />
           <Route path="/driver/profile" element={<DriverRoute><DriverProfilePage /></DriverRoute>} />
-          <Route path="/driver/settings" element={<DriverRoute><DriverSettingsPage /></DriverRoute>} />
 
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLoginPage />} />

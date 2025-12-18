@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Camera, Car, Phone, User, Settings, ChevronRight, MapPin, Star, Clock } from "lucide-react";
+import { ArrowLeft, Camera, Car, ChevronRight, MapPin, Star, Clock, LogOut, Sun, Moon } from "lucide-react";
 import { useDriverStore } from "@/store/driverStore";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,6 +15,11 @@ const DriverProfilePage = () => {
   const navigate = useNavigate();
   const driver = useDriverStore((state) => state.driver);
   const setDriver = useDriverStore((state) => state.setDriver);
+  const logout = useDriverStore((state) => state.logout);
+  
+  const [isDarkMode, setIsDarkMode] = useState(() => 
+    document.documentElement.classList.contains("dark")
+  );
   
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(driver?.name || "");
@@ -57,20 +62,17 @@ const DriverProfilePage = () => {
     const file = e.target.files?.[0];
     if (!file || !driver?.sessionToken) return;
     
-    // Check file size (10MB limit)
     if (file.size > 10 * 1024 * 1024) {
       toast.error("File is too large. Please use an image smaller than 10MB.");
       return;
     }
 
-    // Local preview
     const reader = new FileReader();
     reader.onloadend = () => {
       setProfileImage(reader.result as string);
     };
     reader.readAsDataURL(file);
 
-    // Upload to server
     const toastId = toast.loading("Uploading photo...");
     try {
       const formData = new FormData();
@@ -90,9 +92,8 @@ const DriverProfilePage = () => {
         throw new Error(data.message || 'Upload failed');
       }
 
-      // Update local driver state
       setDriver({
-        ...driver,
+        ...driver!,
         profileImageUrl: data.imageUrl,
       });
 
@@ -133,7 +134,7 @@ const DriverProfilePage = () => {
       }
 
       setDriver({
-        ...driver,
+        ...driver!,
         name,
         phone,
         carModel,
@@ -159,8 +160,26 @@ const DriverProfilePage = () => {
       .slice(0, 2);
   };
 
+  const toggleDarkMode = () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    if (newMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+    toast.success("Logged out successfully");
+    navigate("/driver/login");
+  };
+
   if (!driver) {
-    navigate("/driver/scan-qr");
+    navigate("/driver/login");
     return null;
   }
 
@@ -174,11 +193,6 @@ const DriverProfilePage = () => {
             </Button>
             <h1 className="text-lg font-semibold text-foreground">Driver Profile</h1>
           </div>
-          <Link to="/driver/settings">
-            <Button variant="ghost" size="icon">
-              <Settings className="w-5 h-5" />
-            </Button>
-          </Link>
         </div>
       </header>
 
@@ -292,57 +306,80 @@ const DriverProfilePage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="space-y-2"
+            className="space-y-4"
           >
-            <h3 className="text-sm font-medium text-muted-foreground px-1 mb-2">Vehicle Information</h3>
+            <h3 className="text-sm font-medium text-muted-foreground px-1 mb-0">Vehicle Information</h3>
             
-            <Card>
-              <CardContent className="py-4 flex items-center gap-4">
-                <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
-                  <Car className="w-5 h-5 text-muted-foreground" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm text-muted-foreground">Car</p>
-                  <p className="text-foreground font-medium">{driver.carColor} {driver.carModel}</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="py-4 flex items-center gap-4">
-                <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
-                  <span className="text-muted-foreground font-bold text-sm">LP</span>
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm text-muted-foreground">License Plate</p>
-                  <p className="text-foreground font-medium">{driver.licensePlate}</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="py-4 flex items-center gap-4">
-                <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
-                  <MapPin className="w-5 h-5 text-muted-foreground" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm text-muted-foreground">Location</p>
-                  <p className="text-foreground font-medium">{driver.locationName}</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Link to="/driver/settings">
-              <Card className="hover:bg-muted/50 transition-colors cursor-pointer mt-4">
+            <div className="grid grid-cols-1 gap-2">
+              <Card>
                 <CardContent className="py-4 flex items-center gap-4">
                   <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
-                    <Settings className="w-5 h-5 text-muted-foreground" />
+                    <Car className="w-5 h-5 text-muted-foreground" />
                   </div>
-                  <span className="flex-1 text-foreground">Account Settings</span>
-                  <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                  <div className="flex-1">
+                    <p className="text-sm text-muted-foreground">Car</p>
+                    <p className="text-foreground font-medium">{driver.carColor} {driver.carModel}</p>
+                  </div>
                 </CardContent>
               </Card>
-            </Link>
+
+              <Card>
+                <CardContent className="py-4 flex items-center gap-4">
+                  <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
+                    <span className="text-muted-foreground font-bold text-sm">LP</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm text-muted-foreground">License Plate</p>
+                    <p className="text-foreground font-medium">{driver.licensePlate}</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {driver.locationName && (
+                <Card>
+                  <CardContent className="py-4 flex items-center gap-4">
+                    <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-muted-foreground" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">Location</p>
+                      <p className="text-foreground font-medium">{driver.locationName}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+
+            <h3 className="text-sm font-medium text-muted-foreground px-1 mt-6">Settings</h3>
+            <div className="grid grid-cols-1 gap-2">
+              <Card 
+                className="hover:bg-muted/50 transition-colors cursor-pointer"
+                onClick={toggleDarkMode}
+              >
+                <CardContent className="py-4 flex items-center gap-4">
+                  <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
+                    {isDarkMode ? <Sun className="w-5 h-5 text-warning" /> : <Moon className="w-5 h-5 text-primary" />}
+                  </div>
+                  <span className="flex-1 text-foreground">{isDarkMode ? "Light Mode" : "Dark Mode"}</span>
+                  <div className={`w-10 h-5 rounded-full relative transition-colors ${isDarkMode ? "bg-primary" : "bg-muted"}`}>
+                    <div className={`absolute top-1 w-3 h-3 rounded-full bg-white transition-all ${isDarkMode ? "right-1" : "left-1"}`} />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card 
+                className="hover:bg-destructive/10 transition-colors cursor-pointer border-destructive/20"
+                onClick={handleLogout}
+              >
+                <CardContent className="py-4 flex items-center gap-4">
+                  <div className="w-10 h-10 bg-destructive/10 rounded-full flex items-center justify-center">
+                    <LogOut className="w-5 h-5 text-destructive" />
+                  </div>
+                  <span className="flex-1 text-destructive font-medium">Log Out</span>
+                  <ChevronRight className="w-5 h-5 text-destructive/50" />
+                </CardContent>
+              </Card>
+            </div>
           </motion.div>
 
           {/* Ride History Section */}
@@ -350,7 +387,7 @@ const DriverProfilePage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="mt-6 space-y-4"
+            className="mt-8 space-y-4"
           >
             <h3 className="text-sm font-medium text-muted-foreground px-1">Recent Rides</h3>
             
@@ -365,7 +402,7 @@ const DriverProfilePage = () => {
               </Card>
             ) : (
               <div className="space-y-3">
-                {rideHistory.map((ride) => (
+                {rideHistory.slice(0, 10).map((ride) => (
                   <Card key={ride._id || ride.id}>
                     <CardContent className="p-4">
                       <div className="flex justify-between items-start mb-2">
@@ -389,18 +426,18 @@ const DriverProfilePage = () => {
                       
                       <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
                         <div className="flex-1 truncate">
-                          <span className="text-foreground/70">From:</span> {ride.pickupLocation}
+                          <span className="text-foreground/70 text-xs uppercase font-bold mr-1">From:</span> {ride.pickupLocation}
                         </div>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <div className="flex-1 truncate">
-                          <span className="text-foreground/70">To:</span> {ride.destination}
+                          <span className="text-foreground/70 text-xs uppercase font-bold mr-1">To:</span> {ride.destination}
                         </div>
                       </div>
                       
                       {ride.rating && (
                         <div className="mt-3 flex items-center gap-1 text-sm bg-warning/10 text-warning-foreground w-fit px-2 py-1 rounded">
-                          <Star className="w-3 h-3 fill-warning" />
+                          <Star className="w-3 h-3 fill-warning text-warning" />
                           <span>Rated: {ride.rating} stars</span>
                         </div>
                       )}

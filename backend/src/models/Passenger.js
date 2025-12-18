@@ -20,11 +20,13 @@ const passengerSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Phone number is required'],
       trim: true,
+      match: [/^\+233\d{9}$/, 'Please provide a valid Ghana phone number starting with +233'],
     },
     password: {
       type: String,
       required: [true, 'Password is required'],
       minlength: [6, 'Password must be at least 6 characters'],
+      match: [/^(?=.*[a-zA-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{6,}$/, 'Password must contain at least one letter and one special character'],
       select: false, // Don't return password by default
     },
     isVerified: {

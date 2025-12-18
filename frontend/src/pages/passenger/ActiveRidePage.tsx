@@ -114,9 +114,7 @@ const ActiveRidePage = () => {
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 gradient-hero rounded-lg flex items-center justify-center">
-              <Car className="w-5 h-5 text-primary-foreground" />
-            </div>
+            <div className="w-8 h-8 rounded-lg" />
             <span className="text-lg font-bold text-foreground">
               {isWaiting ? "Finding Driver..." : "Ride Details"}
             </span>
@@ -168,9 +166,8 @@ const ActiveRidePage = () => {
                     <CardContent className="py-12 text-center">
                       <div className="relative inline-block mb-6">
                         <div className="w-20 h-20 rounded-full border-4 border-primary/20 flex items-center justify-center">
-                          <Car className="w-10 h-10 text-primary animate-pulse" />
+                          <Loader2 className="w-10 h-10 text-primary animate-spin" />
                         </div>
-                        <div className="absolute inset-0 w-20 h-20 rounded-full border-4 border-transparent border-t-primary animate-spin" />
                       </div>
                       <h3 className="text-xl font-bold text-foreground mb-2">Finding Your Driver</h3>
                       <p className="text-muted-foreground mb-2">Searching for available drivers nearby...</p>
@@ -242,7 +239,11 @@ const ActiveRidePage = () => {
                           <h3 className="text-xl font-bold text-foreground">{activeRide.driverId.name}</h3>
                           <div className="flex items-center gap-1 text-sm text-muted-foreground">
                             <Star className="w-4 h-4 fill-warning text-warning" />
-                            <span>{activeRide.driverId.rating || 4.8}</span>
+                            <span>{activeRide.driverId.rating ? Number(activeRide.driverId.rating).toFixed(1) : "5.0"}</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
+                            <Phone className="w-3.5 h-3.5" />
+                            <span>{activeRide.driverId.phone}</span>
                           </div>
                         </div>
                         <a

@@ -5,7 +5,7 @@ import { z } from "zod";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { Car, User, Phone, Lock, Truck, Palette, Hash, Loader2, ArrowLeft } from "lucide-react";
+import { Car, User, Phone, Lock, Truck, Palette, Hash, Loader2, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,11 +14,13 @@ import { useDriverStore } from "@/store/driverStore";
 
 const registerSchema = z.object({
   name: z.string().min(2, "Name is required"),
-  phone: z.string().min(10, "Phone number is required"),
+  phone: z.string().regex(/^\+233\d{9}$/, "Phone number must start with +233 followed by 9 digits"),
   carModel: z.string().min(2, "Car model is required"),
   carColor: z.string().min(2, "Car color is required"),
   licensePlate: z.string().min(2, "License plate is required"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string()
+    .min(6, "Password must be at least 6 characters")
+    .regex(/^(?=.*[a-zA-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{6,}$/, "Password must contain at least one letter and one special character"),
   confirmPassword: z.string().min(6, "Please confirm your password"),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -29,6 +31,8 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 const DriverRegisterPage = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
   const setDriver = useDriverStore((state) => state.setDriver);
 
@@ -80,7 +84,7 @@ const DriverRegisterPage = () => {
       {/* Header */}
       <header className="bg-card border-b border-border sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+          <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div className="flex items-center gap-2">
@@ -194,12 +198,22 @@ const DriverRegisterPage = () => {
                       <Lock className="w-4 h-4 text-muted-foreground" />
                       Password
                     </label>
-                    <Input
-                      {...register("password")}
-                      type="password"
-                      placeholder="••••••••"
-                      disabled={isLoading}
-                    />
+                    <div className="relative">
+                      <Input
+                        {...register("password")}
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        disabled={isLoading}
+                        className="pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
                     {errors.password && (
                       <p className="text-destructive text-sm">{errors.password.message}</p>
                     )}
@@ -211,12 +225,22 @@ const DriverRegisterPage = () => {
                       <Lock className="w-4 h-4 text-muted-foreground" />
                       Confirm Password
                     </label>
-                    <Input
-                      {...register("confirmPassword")}
-                      type="password"
-                      placeholder="••••••••"
-                      disabled={isLoading}
-                    />
+                    <div className="relative">
+                      <Input
+                        {...register("confirmPassword")}
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        disabled={isLoading}
+                        className="pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
                     {errors.confirmPassword && (
                       <p className="text-destructive text-sm">{errors.confirmPassword.message}</p>
                     )}
