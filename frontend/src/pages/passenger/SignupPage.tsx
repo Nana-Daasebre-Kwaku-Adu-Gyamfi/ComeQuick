@@ -90,7 +90,7 @@ const SignupPage = () => {
                   </label>
                   <Input
                     {...register("name")}
-                    placeholder="John Doe"
+                    placeholder="Your full name"
                     disabled={isLoading}
                   />
                   {errors.name && (
@@ -106,7 +106,7 @@ const SignupPage = () => {
                   <Input
                     {...register("email")}
                     type="email"
-                    placeholder="john@example.com"
+                    placeholder="Your email address"
                     disabled={isLoading}
                   />
                   {errors.email && (

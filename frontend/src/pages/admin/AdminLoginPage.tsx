@@ -98,15 +98,13 @@ const AdminLoginPage = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
-                  <Button
+                  <button
                     type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-full"
                     onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </Button>
+                  </button>
                 </div>
               </div>
               <Button type="submit" className="w-full" disabled={isLoading}>

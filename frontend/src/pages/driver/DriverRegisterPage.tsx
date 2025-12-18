@@ -88,9 +88,6 @@ const DriverRegisterPage = () => {
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 gradient-hero rounded-lg flex items-center justify-center">
-              <Car className="w-5 h-5 text-primary-foreground" />
-            </div>
             <span className="text-lg font-bold text-foreground">Driver Registration</span>
           </div>
         </div>
@@ -119,7 +116,7 @@ const DriverRegisterPage = () => {
                     </label>
                     <Input
                       {...register("name")}
-                      placeholder="John Doe"
+                      placeholder="Your fullname"
                       disabled={isLoading}
                     />
                     {errors.name && (
@@ -147,12 +144,11 @@ const DriverRegisterPage = () => {
                   {/* Car Model */}
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-foreground flex items-center gap-2">
-                      <Truck className="w-4 h-4 text-muted-foreground" />
                       Car Model
                     </label>
                     <Input
                       {...register("carModel")}
-                      placeholder="Toyota Corolla"
+                      placeholder="Mercedes-Benz"
                       disabled={isLoading}
                     />
                     {errors.carModel && (
@@ -163,12 +159,11 @@ const DriverRegisterPage = () => {
                   {/* Car Color */}
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-foreground flex items-center gap-2">
-                      <Palette className="w-4 h-4 text-muted-foreground" />
                       Car Color
                     </label>
                     <Input
                       {...register("carColor")}
-                      placeholder="Silver"
+                      placeholder="Black"
                       disabled={isLoading}
                     />
                     {errors.carColor && (
@@ -260,7 +255,6 @@ const DriverRegisterPage = () => {
                       </>
                     ) : (
                       <>
-                        <Car className="w-5 h-5" />
                         Create Driver Account
                       </>
                     )}
