@@ -27,6 +27,12 @@ const ProfilePage = () => {
     const token = useAuthStore.getState().token;
     
     if (!file || !passenger || !token) return;
+    
+    // Check file size (10MB limit)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("File is too large. Please use an image smaller than 10MB.");
+      return;
+    }
 
     // Local preview
     const reader = new FileReader();
@@ -64,7 +70,10 @@ const ProfilePage = () => {
       toast.success("Photo uploaded successfully", { id: toastId });
     } catch (error) {
       console.error("Upload error:", error);
-      toast.error("Failed to upload photo", { id: toastId });
+      const errorMessage = error instanceof Error && error.message.includes("large") 
+        ? "Upload failed: Image is larger than 10MB. Please use a smaller photo."
+        : "Failed to upload photo";
+      toast.error(errorMessage, { id: toastId });
     }
   };
 
