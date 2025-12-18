@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Shield, Eye, EyeOff } from "lucide-react";
+import { Shield, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -54,14 +54,25 @@ const AdminLoginPage = () => {
         className="w-full max-w-md"
       >
         <Card className="border-0 shadow-2xl bg-[hsl(207,75%,45%)]">
-          <CardHeader className="text-center pb-2">
+          <div className="p-4 flex items-center gap-4">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => navigate("/")}
+              className="text-white hover:bg-white/10"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <span className="text-white font-bold">Back to Home</span>
+          </div>
+          <CardHeader className="text-center pt-2 pb-2">
             <div className="flex justify-center mb-4">
               <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center">
                 <Shield className="w-8 h-8 text-primary-foreground" />
               </div>
             </div>
             <CardTitle className="text-2xl font-bold">Admin Portal</CardTitle>
-            <p className="text-muted-foreground">Sign in to manage ComeQuick</p>
+            <p className="text-white">Sign in to manage ComeQuick</p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
@@ -102,8 +113,6 @@ const AdminLoginPage = () => {
                 {isLoading ? "Signing in..." : "Sign In"}
               </Button>
             </form>
-
-
           </CardContent>
         </Card>
       </motion.div>

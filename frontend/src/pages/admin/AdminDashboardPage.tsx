@@ -213,8 +213,8 @@ const AdminDashboardPage = () => {
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center">
-                    <Car className="w-6 h-6 text-success" />
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Car className="w-6 h-6 text-primary" />
                   </div>
                   <div>
                     <p className="text-2xl font-bold text-foreground">{drivers.length}</p>
@@ -227,8 +227,8 @@ const AdminDashboardPage = () => {
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center">
-                    <Shield className="w-6 h-6 text-warning" />
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Shield className="w-6 h-6 text-primary" />
                   </div>
                   <div>
                     <p className="text-2xl font-bold text-foreground">
@@ -243,8 +243,8 @@ const AdminDashboardPage = () => {
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center">
-                    <CheckCircle className="w-6 h-6 text-accent" />
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <CheckCircle className="w-6 h-6 text-primary" />
                   </div>
                   <div>
                     <p className="text-2xl font-bold text-foreground">
