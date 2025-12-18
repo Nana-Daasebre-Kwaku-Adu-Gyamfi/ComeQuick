@@ -121,3 +121,21 @@ Required `.env` variables in backend:
 
 Required `.env` variables in frontend:
 - `VITE_API_URL`: Base URL for the backend API (e.g., hosted Render URL).
+
+## 8. AI Use Declaration
+
+In accordance with transparency guidelines, the following AI tools and platforms were utilized during the development of ComeQuick:
+
+| Tool Name | Provider | Usage / Scope |
+| :--- | :--- | :--- |
+| **Lovable** | Lovable.dev | Used as the initial baseline generator for the frontend React (Vite) template. It provided the scaffolding for Shadcn UI components and the core project structure, which was then heavily modified and extended manually. |
+| **Gemini (Image Generator)** | Google | Used to generate the conceptual assets and base imagery for the **ComeQuick logo** and splash screen branding. |
+| **Canva (AI Design Tools)** | Canva | Used to refine the logo design, pick a cohesive and modern color palette, and design the consistent visual theme across the web-app. |
+| **Claude** | Anthropic | Utilized for deep debugging of complex geospatial logic, specifically resolving initial rendering issues with **Leaflet** maps and ensuring smooth integration with the **Google Maps GPS API**. |
+| **Antigravity** | Google DeepMind | Acted as a primary AI coding assistant for pair programming, refactoring components (e.g., modularizing `MapPicker`), implementing backend security fixes (null-checks, orphaned data filtering), and final documentation. |
+
+### Post-Processing & Verification
+All AI-generated code and design assets underwent rigorous human validation:
+- **Code**: Every component generated or refactored was manually reviewed for logic errors, tested for responsiveness, and verified against the backend API.
+- **Security**: Specific manual intervention was applied to ensure the JWT authentication flow and data isolation (clearing stores on logout) were properly implemented.
+- **Logic**: The polling mechanism and map coordinate syncing were manually calibrated to ensure real-time accuracy.

@@ -67,4 +67,15 @@ For those interested in the technology:
 *   **Smart Navigation**: Driver navigation is powered by **Google Maps Directions API**, ensuring routes are based on live traffic and current driver position.
 *   **Image Storage**: We use **Cloudinary** for secure, lightning-fast profile photo hosting.
 
+---
+
+## 🛠️ Built With AI Assistance
+
+This project leverages modern AI technologies for efficiency and precision:
+- **Core Frameworks**: Initial scaffolding via **Lovable.dev**.
+- **Design & Branding**: AI-assisted logo and palette design using **Gemini** and **Canva**.
+- **Development & Debugging**: Logic optimization and map integration supported by **Claude** and **Antigravity**.
+
+*For full technical details, see [TECHNICAL_DOCS.md](TECHNICAL_DOCS.md).*
+
 Enjoy your ride with **ComeQuick**! 
