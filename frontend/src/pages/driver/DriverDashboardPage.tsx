@@ -63,7 +63,7 @@ const DriverDashboardPage = () => {
   const checkActiveRide = async () => {
     if (!driver) return;
     try {
-      const response = await fetch('http://localhost:3000/api/rides/driver/active', {
+      const response = await fetch('https://comequick.onrender.com/api/rides/driver/active', {
         headers: {
           'Authorization': `Bearer ${driver.sessionToken}`,
         },
@@ -111,7 +111,7 @@ const DriverDashboardPage = () => {
     // Don't show loading spinner on background polls for better UX
     // setIsLoading(true); 
     try {
-      const response = await fetch('http://localhost:3000/api/rides/pending', {
+      const response = await fetch('https://comequick.onrender.com/api/rides/pending', {
         headers: {
           'Authorization': `Bearer ${driver.sessionToken}`,
         },
@@ -134,7 +134,7 @@ const DriverDashboardPage = () => {
     if (!driver) return;
     setIsAccepting(request._id);
     try {
-      const response = await fetch(`http://localhost:3000/api/rides/${request._id}/accept`, {
+      const response = await fetch(`https://comequick.onrender.com/api/rides/${request._id}/accept`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -178,7 +178,7 @@ const DriverDashboardPage = () => {
   const handleComplete = async () => {
     if (!currentRide || !driver) return;
     try {
-      const response = await fetch(`http://localhost:3000/api/rides/${currentRide.id}/complete`, {
+      const response = await fetch(`https://comequick.onrender.com/api/rides/${currentRide.id}/complete`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

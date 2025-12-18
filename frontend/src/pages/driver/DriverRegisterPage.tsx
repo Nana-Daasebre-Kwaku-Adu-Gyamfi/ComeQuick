@@ -45,7 +45,7 @@ const DriverRegisterPage = () => {
     try {
       const { confirmPassword, ...registerData } = data;
       
-      const response = await fetch('http://localhost:3000/api/drivers/register', {
+      const response = await fetch('https://comequick.onrender.com/api/drivers/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

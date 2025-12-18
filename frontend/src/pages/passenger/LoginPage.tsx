@@ -53,7 +53,7 @@ const LoginPage = () => {
         <div className="w-full max-w-md">
           {/* Logo */}
           <Link to="/" className="flex items-center justify-center gap-2 mb-8">
-            <img src="/public/ComeQuick Loader.png" alt="Logo" className="w-12 h-12 rounded-xl" />
+            <img src="/loader.png" alt="Logo" className="w-12 h-12 rounded-xl" />
             <span className="text-2xl font-bold text-foreground">ComeQuick</span>
           </Link>
 

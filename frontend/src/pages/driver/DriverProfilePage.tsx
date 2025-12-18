@@ -34,7 +34,7 @@ const DriverProfilePage = () => {
       
       setIsLoadingHistory(true);
       try {
-        const response = await fetch('http://localhost:3000/api/rides/driver/history', {
+        const response = await fetch('https://comequick.onrender.com/api/rides/driver/history', {
           headers: {
             'Authorization': `Bearer ${driver.sessionToken}`
           }
@@ -70,7 +70,7 @@ const DriverProfilePage = () => {
       const formData = new FormData();
       formData.append('image', file);
 
-      const response = await fetch('http://localhost:3000/api/upload/profile', {
+      const response = await fetch('https://comequick.onrender.com/api/upload/profile', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${driver.sessionToken}`,
@@ -102,7 +102,7 @@ const DriverProfilePage = () => {
 
     const toastId = toast.loading("Saving profile...");
     try {
-      const response = await fetch('http://localhost:3000/api/drivers/profile', {
+      const response = await fetch('https://comequick.onrender.com/api/drivers/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

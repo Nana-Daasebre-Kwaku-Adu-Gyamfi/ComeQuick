@@ -104,7 +104,7 @@ export const getActiveRide = async (req, res, next) => {
       .sort({ createdAt: -1 });
 
     if (!ride) {
-      return res.status(404).json({ message: 'No active ride found' });
+      return res.json({ ride: null });
     }
 
     res.json({ ride });
@@ -438,7 +438,8 @@ export const rateDriver = async (req, res, next) => {
 
       driver.totalRatings += rating;
       driver.ratingCount += 1;
-      driver.rating = driver.totalRatings / driver.ratingCount;
+      // Round to 1 decimal place
+      driver.rating = Math.round((driver.totalRatings / driver.ratingCount) * 10) / 10;
       await driver.save();
       console.log(`Driver ${driver.name} new rating: ${driver.rating.toFixed(1)}`);
     }

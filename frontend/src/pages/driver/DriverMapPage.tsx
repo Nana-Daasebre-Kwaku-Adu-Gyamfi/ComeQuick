@@ -45,7 +45,7 @@ const DriverMapPage = () => {
   useEffect(() => {
     const fetchPendingRides = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/rides/pending', {
+        const response = await fetch('https://comequick.onrender.com/api/rides/pending', {
           headers: {
             'Authorization': `Bearer ${driver?.sessionToken || ''}`,
           },

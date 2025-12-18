@@ -68,7 +68,18 @@ const ActiveRidePage = () => {
       clearRide();
       navigate("/passenger/dashboard");
     } catch (error) {
-      toast.error("Failed to cancel request");
+      // If the ride is not found, it means it's already gone/cancelled
+      // So we should just clear the state and move on
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      
+      if (errorMessage.includes("Ride not found") || errorMessage.includes("404")) {
+        toast.info("Ride request was already removed");
+        clearRide();
+        navigate("/passenger/dashboard");
+      } else {
+        console.error("Cancel error:", error);
+        toast.error("Failed to cancel request");
+      }
     } finally {
       setIsCancelling(false);
     }

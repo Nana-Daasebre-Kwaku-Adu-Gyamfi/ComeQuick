@@ -1,6 +1,6 @@
 import { Passenger, LoginCredentials, SignupData } from '../types/auth.types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://comequick.onrender.com/api';
 
 // Helper function to handle API responses
 const handleResponse = async (response: Response) => {

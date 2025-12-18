@@ -51,7 +51,7 @@ const AdminDashboardPage = () => {
 
   const fetchPassengers = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/admin/passengers', {
+      const response = await fetch('https://comequick.onrender.com/api/admin/passengers', {
         headers: getAuthHeaders(),
       });
       if (response.ok) {
@@ -65,7 +65,7 @@ const AdminDashboardPage = () => {
 
   const fetchDrivers = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/admin/drivers', {
+      const response = await fetch('https://comequick.onrender.com/api/admin/drivers', {
         headers: getAuthHeaders(),
       });
       if (response.ok) {
@@ -88,7 +88,7 @@ const AdminDashboardPage = () => {
     if (!confirm("Are you sure you want to delete this passenger?")) return;
     
     try {
-      const response = await fetch(`http://localhost:3000/api/admin/passengers/${id}`, {
+      const response = await fetch(`https://comequick.onrender.com/api/admin/passengers/${id}`, {
         method: 'DELETE',
         headers: getAuthHeaders(),
       });
@@ -106,7 +106,7 @@ const AdminDashboardPage = () => {
 
   const handleTogglePassengerStatus = async (id: string) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/admin/passengers/${id}/suspend`, {
+      const response = await fetch(`https://comequick.onrender.com/api/admin/passengers/${id}/suspend`, {
         method: 'PUT',
         headers: getAuthHeaders(),
       });
@@ -123,7 +123,7 @@ const AdminDashboardPage = () => {
 
   const handleVerifyDriver = async (id: string) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/admin/drivers/${id}/verify`, {
+      const response = await fetch(`https://comequick.onrender.com/api/admin/drivers/${id}/verify`, {
         method: 'PUT',
         headers: getAuthHeaders(),
       });
@@ -142,7 +142,7 @@ const AdminDashboardPage = () => {
     if (!confirm("Are you sure you want to delete this driver?")) return;
 
     try {
-      const response = await fetch(`http://localhost:3000/api/admin/drivers/${id}`, {
+      const response = await fetch(`https://comequick.onrender.com/api/admin/drivers/${id}`, {
         method: 'DELETE',
         headers: getAuthHeaders(),
       });

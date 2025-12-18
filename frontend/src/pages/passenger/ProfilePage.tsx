@@ -41,7 +41,7 @@ const ProfilePage = () => {
       const formData = new FormData();
       formData.append('image', file);
 
-      const response = await fetch('http://localhost:3000/api/upload/profile', {
+      const response = await fetch('https://comequick.onrender.com/api/upload/profile', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

@@ -29,7 +29,7 @@ export const RatingModal = ({ isOpen, onClose, rideId, driverName, onRatingSubmi
     try {
       const token = useAuthStore.getState().token;
 
-      const response = await fetch(`http://localhost:3000/api/rides/${rideId}/rate`, {
+      const response = await fetch(`https://comequick.onrender.com/api/rides/${rideId}/rate`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

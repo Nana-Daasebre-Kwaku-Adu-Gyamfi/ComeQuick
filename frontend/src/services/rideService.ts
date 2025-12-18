@@ -1,6 +1,6 @@
 import { useAuthStore } from '../store/authStore';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://comequick.onrender.com/api';
 
 // Helper function to get auth token
 const getToken = () => {
@@ -81,10 +81,6 @@ export const rideService = {
             },
         });
 
-        if (response.status === 404) {
-            return null;
-        }
-
         const result = await handleResponse(response);
         return result.ride;
     },
@@ -120,18 +116,7 @@ export const rideService = {
 
     // Poll for ride status (check if driver accepted)
     async pollRideStatus(rideId: string) {
-        const token = getToken();
-        const response = await fetch(`${API_BASE_URL}/rides/active`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-            },
-        });
-
-        if (response.status === 404) {
-            return null;
-        }
-
-        const result = await handleResponse(response);
-        return result.ride;
+        // Re-use active ride endpoint
+        return this.getActiveRide();
     },
 };
