@@ -53,7 +53,7 @@ const AdminLoginPage = () => {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        <Card className="border-0 shadow-2xl">
+        <Card className="border-0 shadow-2xl bg-[hsl(207,75%,45%)]">
           <CardHeader className="text-center pb-2">
             <div className="flex justify-center mb-4">
               <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center">
@@ -111,6 +111,5 @@ const AdminLoginPage = () => {
   );
 };
 //admin@gmail.com...Admin.password
-//test@gmail.com...password123
-//doe@gmail.com...+233123456789...joe123 
+
 export default AdminLoginPage;

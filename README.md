@@ -16,8 +16,8 @@ To demonstrate this application, you will essentially play two roles: the **Pass
 ### Opening the App
 We recommend opening the app in **two different browser windows** (or one normal window and one Incognito/Private window) to simulate two different users.
 
--   **Window 1 (Passenger)**: Go to `http://localhost:5173/`
--   **Window 2 (Driver)**: Go to `http://localhost:5173/driver`
+-   **Window 1 (Passenger)**: Go to `https://come-quick.vercel.app/`
+-   **Window 2 (Driver)**: Go to `https://come-quick.vercel.app/`
 
 ---
 
@@ -25,7 +25,7 @@ We recommend opening the app in **two different browser windows** (or one normal
 
 ### Step 1: Passenger Setup (Window 1)
 1.  Click **"Request a Ride"** or **"Passenger Login"**.
-2.  If you don't have an account, click **Sign up**. Enter a name, email (e.g., `student@school.edu`), phone, and password.
+2.  If you don't have an account, click **Sign up**. Enter a name, email (e.g., `student@gmail.com`), phone, and password.
 3.  Once logged in, go to the **Profile** page (top right avatar).
 4.  **Upload a Photo**: Click the camera icon and select an image.
     *   *Note: This image is safely stored in the cloud (Cloudinary API) and will be visible to your driver.*
