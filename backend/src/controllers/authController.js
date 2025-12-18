@@ -39,6 +39,7 @@ export const signup = async (req, res, next) => {
         email: passenger.email,
         phone: passenger.phone,
         isVerified: passenger.isVerified,
+        profileImageUrl: passenger.profileImageUrl,
       },
     });
   } catch (error) {
@@ -90,6 +91,7 @@ export const login = async (req, res, next) => {
         email: passenger.email,
         phone: passenger.phone,
         isVerified: passenger.isVerified,
+        profileImageUrl: passenger.profileImageUrl,
       },
     });
   } catch (error) {

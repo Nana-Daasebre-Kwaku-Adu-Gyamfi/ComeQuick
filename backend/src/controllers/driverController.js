@@ -45,10 +45,10 @@ export const registerDriver = async (req, res, next) => {
         carModel: driver.carModel,
         carColor: driver.carColor,
         licensePlate: driver.licensePlate,
-        licensePlate: driver.licensePlate,
         isVerified: driver.isVerified,
         rating: driver.rating,
         ratingCount: driver.ratingCount,
+        profileImageUrl: driver.profileImageUrl,
       },
     });
   } catch (error) {
@@ -89,10 +89,10 @@ export const loginDriver = async (req, res, next) => {
         carColor: driver.carColor,
         licensePlate: driver.licensePlate,
         isVerified: driver.isVerified,
-        isVerified: driver.isVerified,
         isAvailable: driver.isAvailable,
         rating: driver.rating,
         ratingCount: driver.ratingCount,
+        profileImageUrl: driver.profileImageUrl,
       },
     });
   } catch (error) {
