@@ -406,13 +406,24 @@ const DriverProfilePage = () => {
                   <Card key={ride._id || ride.id}>
                     <CardContent className="p-4">
                       <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <p className="font-semibold text-foreground">
-                            {ride.passengerId?.name || "Passenger"}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {new Date(ride.completedAt).toLocaleDateString()} • {new Date(ride.completedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </p>
+                        <div className="flex items-center gap-3">
+                          <Avatar className="w-10 h-10 ring-1 ring-border">
+                            {ride.passengerId?.profileImageUrl ? (
+                              <img src={ride.passengerId.profileImageUrl} alt={ride.passengerId.name} className="w-full h-full object-cover" />
+                            ) : (
+                              <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                                {ride.passengerId?.name ? getInitials(ride.passengerId.name) : "P"}
+                              </AvatarFallback>
+                            )}
+                          </Avatar>
+                          <div>
+                            <p className="font-semibold text-foreground">
+                              {ride.passengerId?.name || "Passenger"}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(ride.completedAt).toLocaleDateString()} • {new Date(ride.completedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </p>
+                          </div>
                         </div>
                         <div className="flex flex-col items-end">
                           <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success">

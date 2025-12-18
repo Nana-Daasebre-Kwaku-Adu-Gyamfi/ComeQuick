@@ -156,9 +156,17 @@ const DashboardPage = () => {
                         key={ride.id}
                         className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg"
                       >
-                        <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                          <Car className="w-6 h-6 text-primary" />
-                        </div>
+                        <Avatar className="w-12 h-12">
+                          {typeof ride.driverId === 'object' && ride.driverId?.profileImageUrl ? (
+                            <img src={ride.driverId.profileImageUrl} alt={ride.driverId.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <AvatarFallback className="bg-primary/10 text-primary">
+                              {typeof ride.driverId === 'object' && ride.driverId?.name 
+                                ? getInitials(ride.driverId.name) 
+                                : <User className="w-6 h-6" />}
+                            </AvatarFallback>
+                          )}
+                        </Avatar>
                         <div className="flex-1">
                           <p className="font-medium text-foreground">
                             {typeof ride.driverId === 'object' && ride.driverId?.name 
