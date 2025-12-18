@@ -6,8 +6,6 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node -r dotenv/config --watch src/server.js",
-    "lint": "eslint src/**/*.js",
-    "lint:fix": "eslint src/**/*.js --fix",
     "verify-db": "node scripts/verifyConnection.js",
     "seed-locations": "node scripts/seedLocations.js",
     "clear-data": "node scripts/clearDummyData.js"
@@ -31,7 +29,6 @@
     "winston": "^3.15.0"
   },
   "devDependencies": {
-    "eslint": "^9.17.0",
     "supertest": "^7.0.0"
   }
 }
