@@ -84,7 +84,7 @@ const LoginPage = () => {
                   <Input
                     {...register("email")}
                     type="email"
-                    placeholder="john@example.com"
+                    placeholder="enter your email"
                     disabled={isLoading}
                   />
                   {errors.email && (
